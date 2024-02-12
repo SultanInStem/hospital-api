@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken'); 
+import jwt from "jsonwebtoken";
 const verifyRefreshToken = (token) => {
     return jwt.verify(token, process.env.JWT_ACCESS_KEY); 
 }
-module.exports = verifyRefreshToken; 
+export default verifyRefreshToken;

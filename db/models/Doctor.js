@@ -1,6 +1,5 @@
-const mongoose = require('mongoose'); 
-const bcrypt = require('bcryptjs'); 
-
+import mongoose from "mongoose"; 
+import bcrypt from "bcryptjs"; 
 const DocSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -31,7 +30,10 @@ DocSchema.pre('save', async function(){
     this.password = password; 
 })
 
+DocSchema.methods.ValidatePassword = async function(password){
+    return await bcrypt.compare(password, this.password); 
+}
+
 const Doctor = mongoose.model('doctors', DocSchema);
 
-
-module.exports = Doctor; 
+export default Doctor;

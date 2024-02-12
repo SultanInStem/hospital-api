@@ -1,9 +1,27 @@
-const express = require("express"); 
+import express from "express"; 
 const router = express.Router(); 
-const createAdmin = require('../controllers/Admin/createAdmin'); 
-const login = require('../controllers/Admin/Login'); 
-const Auth = require('../middleware/Auth'); 
-router.get('/', (req,res) => res.send('Admin here'))
-router.post('/create', Auth, createAdmin);
+import createAdmin from '../controllers/Admin/createAdmin.js';
+import login from '../controllers/Admin/Login.js'; 
+import createDoctor from '../controllers/Admin/createDoctor.js'; 
+import getDoctors from '../controllers/Admin/getDoctors.js'; 
+import deleteDoctor from '../controllers/Admin/deleteDoctor.js'; 
+import createPatient from '../controllers/Admin/createPatient.js'; 
+import Auth from '../middleware/Auth.js'; 
+
+// POST REQUESTS 
+router.post('/create', Auth, createAdmin); 
 router.post('/login', login); 
-module.exports = router; 
+router.post('/create/doctor', Auth, createDoctor);
+router.post('/create/patient', Auth, createPatient); 
+//----------- 
+
+// GET REQUESTS 
+router.get('/doctors', Auth, getDoctors); 
+router.get('/', (req,res) => res.send('Admin here'))
+//------------
+
+
+// DELETE REQUESTS 
+router.delete('/doctor/:id', Auth, deleteDoctor); 
+//----------------
+export default router;

@@ -1,21 +1,22 @@
-require('dotenv').config(); 
-const connect = require('./db/connect'); 
-const ErrorHandler = require('./errorHandlers/ErrorHandler');
-const NotFound = require("./errorHandlers/NotFound"); 
+import "./dotenv.js";
+import connect from "./db/connect.js";
+import ErrorHandler from "./errorHandlers/ErrorHandler.js"; 
+import NotFound from "./errorHandlers/NotFound.js"; 
 
 // SECURITY PACKAGES 
-const cors = require('cors');
-const mongo_sanitize = require('express-mongo-sanitize')
-const helmet = require('helmet'); 
+import cors from "cors";
+import mongo_sanitize from "express-mongo-sanitize"; 
+import helmet from "helmet";
 // ------------------ 
 
 
 const PORT = process.env.PORT || 3000; 
-const express = require('express'); 
+import express from "express";
 const app = express();
 
 // ROUTERS 
-const AdminRouter = require('./routes/AdminRouter'); 
+import AdminRouter from './routes/AdminRouter.js'; 
+import DoctorRouter from './routes/DoctorRouter.js'; 
 //--------
 app.use(express.json());
 app.use(cors({
@@ -40,6 +41,7 @@ app.get('/', (req, res) => {
     return res.status(200).send("<h1>Server is live!</h1>")
 })
 app.use("/api/v1/admin", AdminRouter);
+app.use("/api/v1/doctor", DoctorRouter); 
 
 app.use(ErrorHandler); 
 app.use(NotFound);

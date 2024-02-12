@@ -1,5 +1,6 @@
-const Admin = require("../../db/models/Admin");  
-const { StatusCodes } = require('http-status-codes');
+import Admin from "../../db/models/Admin.js";  
+import { StatusCodes } from "http-status-codes";
+
 const createAdmin = async (req, res, next) => {
     try{
         console.log(req.body)
@@ -11,5 +12,4 @@ const createAdmin = async (req, res, next) => {
         return next(err); 
     }
 }
-
-module.exports = createAdmin; 
+export default createAdmin;
