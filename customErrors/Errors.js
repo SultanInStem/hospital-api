@@ -1,18 +1,20 @@
-const CustomError = require("./CustomError"); 
-const { StatusCodes } = require('http-status-codes');
-class NotFound extends CustomError{
+import CustomError from "./CustomError.js"; 
+import { StatusCodes } from 'http-status-codes';
+export class NotFound extends CustomError{
     constructor(message){
         super(message); 
         this.statusCode = StatusCodes.NOT_FOUND;  
     }
 }
-class BadRequest extends CustomError{
+export class BadRequest extends CustomError{
     constructor(message){
         super(message);
         this.statusCode = StatusCodes.BAD_REQUEST; 
     }
 }
-
-module.exports = {
-    NotFound, BadRequest
+export class Unauthorized extends CustomError{
+    constructor(message){
+        super(message);
+        this.statusCode = StatusCodes.UNAUTHORIZED; 
+    }
 }

@@ -1,9 +1,9 @@
-const { StatusCodes } = require('http-status-codes');
-const Admin = require('../../db/models/Admin'); 
-const joi = require('joi'); 
-const { NotFound } = require('../../customErrors/Errors'); 
-const getAccessToken = require('../../utils/getAccessToken'); 
-const getRefreshToken = require("../../utils/getRefreshToken"); 
+import { StatusCodes } from 'http-status-codes';
+import Admin from '../../db/models/Admin.js'; 
+import joi from 'joi'; 
+import { NotFound, BadRequest } from '../../customErrors/Errors.js'; 
+import getAccessToken from '../../utils/getAccessToken.js'; 
+import getRefreshToken from "../../utils/getRefreshToken.js"; 
 const validateData = async (data) => {
     try{
         const schema = joi.object({
@@ -25,10 +25,15 @@ const login = async (req, res, next) => {
         const {username, password} = validated; 
         const admin = await Admin.findOne({username});
         if(!admin) throw new NotFound("Admin cannot be found"); 
-        
-        return res.status(StatusCodes.OK).json({success: true})
+        const isPasswordValid = await admin.ValidatePassword(password);  
+        if(!isPasswordValid) throw new BadRequest("Incorrect password or username"); 
+
+        const accessToken = getAccessToken({userId: admin._id});
+        const refreshToken = getRefreshToken({userId: admin._id});
+
+        return res.status(StatusCodes.OK).json({success: true, accessToken, refreshToken});
     }catch(err){
         return next(err); 
     }
 }
-module.exports = login; 
+export default login; 
