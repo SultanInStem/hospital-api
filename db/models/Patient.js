@@ -21,6 +21,14 @@ const PatientSchema = new mongoose.Schema({
     dateOfBirth: {
         type: Date,
         required: true
+    },
+    uniqueId: {
+        type: String,
+        unique: true,
+    },
+    notes: {
+        type: Array,
+        default: []
     }
 }, {timestamps: true})
 

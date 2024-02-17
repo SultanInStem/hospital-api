@@ -17,6 +17,7 @@ const app = express();
 // ROUTERS 
 import AdminRouter from './routes/AdminRouter.js'; 
 import DoctorRouter from './routes/DoctorRouter.js'; 
+import AuthRouter from "./routes/AuthRouter.js"; 
 //--------
 app.use(express.json());
 app.use(cors({
@@ -41,6 +42,7 @@ app.get('/', (req, res) => {
     return res.status(200).send("<h1>Server is live!</h1>")
 })
 app.use("/api/v1/admin", AdminRouter);
+app.use("/api/v1/auth", AuthRouter); 
 app.use("/api/v1/doctor", DoctorRouter); 
 
 app.use(ErrorHandler); 

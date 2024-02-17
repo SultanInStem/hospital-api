@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import Patient from '../../db/models/Patient.js';
 import joi from 'joi'; 
-
+import getPatientId from '../../utils/getPatientId.js';
 const validateData = async (data) => {
     try{
         const schema = joi.object({
@@ -18,11 +18,16 @@ const validateData = async (data) => {
         throw err; 
     }
 }
-
 const createPatient = async (req, res, next) => {
     try{
         const data = await validateData(req.body);  
-        const seed = data['firstName'] + data['lastName'] + data['phoneNumber'] 
+        const seed = {
+            firstName: data['firstName'],
+            lastName: data['lastName'],
+            phoneNumber: data['phoneNumber']
+        };
+        const patientID = getPatientId(seed);
+        data['uniqueId'] = patientID;
         const patient = await Patient.create(data);
         return res.status(StatusCodes.OK).json({success: true, patient})
     }catch(err){
