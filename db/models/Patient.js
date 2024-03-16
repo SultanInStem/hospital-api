@@ -25,6 +25,7 @@ const PatientSchema = new mongoose.Schema({
     uniqueId: {
         type: String,
         unique: true,
+        required: true
     },
     notes: {
         type: Array,
