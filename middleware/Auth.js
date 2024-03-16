@@ -6,12 +6,12 @@ const Auth = (req, res, next) => {
     const headers = req.headers.authorization; 
     try{
         if(!headers || !headers.startsWith("Bearer")) throw new Unauthorized("Not authorized to access this route");
-        const token = headers.split(' ')[1]; 
+        const token = headers.split(' ')[1];  
         if(!token) throw new Unauthorized("Not authorized to access this route"); 
         jwt.verify(token, process.env.JWT_ACCESS_KEY, async (err, decoded) => {
             if(err) return res.status(StatusCodes.UNAUTHORIZED).json({success: false, msg: "Not authorized"});
-            const userId = decoded.userId; 
-            req.userId = userId; 
+            req.userId = decoded.userId; 
+            req.isAdmin = decoded.isAdmin; 
             next();
         })
     }catch(err){

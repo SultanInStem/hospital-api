@@ -1,6 +1,6 @@
 import Note from "../../../db/models/Notes.js";
 import Patient from "../../../db/models/Patient.js";
-import Doctor from "../../../db/models/Doctor.js";
+// import Doctor from "../../../db/models/Doctor.js";
 import joi from "joi"; 
 import { NotFound } from "../../../customErrors/Errors.js"; 
 import mongoose from "mongoose";

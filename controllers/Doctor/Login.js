@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import Doctor from '../../db/models/Doctor.js'; 
+// import Doctor from '../../db/models/Doctor.js'; 
 import { NotFound, BadRequest } from '../../customErrors/Errors.js'; 
 import getAccessToken from '../../utils/getAccessToken.js'; 
 import getRefreshToken from '../../utils/getRefreshToken.js'; 

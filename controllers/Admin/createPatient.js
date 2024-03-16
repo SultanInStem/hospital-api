@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import Patient from '../../db/models/Patient.js';
 import joi from 'joi'; 
 import getPatientId from '../../utils/getPatientId.js';
+import { Unauthorized } from '../../customErrors/Errors.js';
 const validateData = async (data) => {
     try{
         const schema = joi.object({
@@ -20,6 +21,7 @@ const validateData = async (data) => {
 }
 const createPatient = async (req, res, next) => {
     try{
+        if(!req.isAdmin) throw new Unauthorized("Not authorized to create a patient");
         const data = await validateData(req.body);  
         const seed = {
             firstName: data['firstName'],

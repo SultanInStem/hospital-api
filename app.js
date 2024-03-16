@@ -17,7 +17,8 @@ const app = express();
 // ROUTERS 
 import AdminRouter from './routes/AdminRouter.js'; 
 import DoctorRouter from './routes/DoctorRouter.js'; 
-import AuthRouter from "./routes/AuthRouter.js"; 
+import AuthRouter from "./routes/AuthRouter.js";  
+import TestRouter from "./routes/TestRouter.js"; 
 //--------
 app.use(express.json());
 app.use(cors({
@@ -44,6 +45,6 @@ app.get('/', (req, res) => {
 app.use("/api/v1/admin", AdminRouter);
 app.use("/api/v1/auth", AuthRouter); 
 app.use("/api/v1/doctor", DoctorRouter); 
-
+app.use('/api/v1/test', TestRouter);
 app.use(ErrorHandler); 
 app.use(NotFound);
