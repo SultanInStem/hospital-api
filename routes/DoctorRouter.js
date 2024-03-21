@@ -1,16 +1,16 @@
 import express from "express"; 
 const router = express.Router();
 import Auth from '../middleware/Auth.js'; 
-import login from '../controllers/Doctor/Login.js'; 
 import makeNote from "../controllers/Doctor/PatientsNotes/makeNote.js";
-// GET REQUESTS 
-//-------------
+import deleteNote from "../controllers/Doctor/PatientsNotes/deleteNote.js";
+import patientSearch from "../controllers/Common/patientSearch.js";
 
-// POST REQUESTS
-router.post('/login', login);
+// NOTES 
 router.post('/note/create', Auth, makeNote); 
-//--------------
+router.delete('/note/:id', Auth, deleteNote);
 
 
+// Patients 
+router.get("/patients/search", Auth, patientSearch);
 
 export default router; 

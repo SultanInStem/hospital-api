@@ -1,8 +1,8 @@
 import Note from "../../../db/models/Notes.js";
 import Patient from "../../../db/models/Patient.js";
-// import Doctor from "../../../db/models/Doctor.js";
+import User from "../../../db/models/User.js"; 
 import joi from "joi"; 
-import { NotFound } from "../../../customErrors/Errors.js"; 
+import { NotFound, Unauthorized } from "../../../customErrors/Errors.js"; 
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 const validateData = async (data) => {
@@ -11,7 +11,6 @@ const validateData = async (data) => {
             patientId: joi.string().required(),
             diagnosis: joi.string(),
             sidenote: joi.string().required(),
-            docId: joi.string().required()
         })
         const {error,value} = schema.validate(data); 
         if(error) throw error; 
@@ -22,36 +21,41 @@ const validateData = async (data) => {
 }
 const makeNote = async (req, res, next) => {
     const session = await mongoose.startSession(); 
-    let abort = false; 
     session.startTransaction(); 
+    let isTransactionFailed = false; 
     try{
+        const {isAdmin, userId} = req;
+        const doctor = await User.findOne({_id: userId}, {firstName: 1, lastName: 1, specialty: 1}); 
+        if(isAdmin) throw new Unauthorized("Only doctors are allowed to diagnoze."); 
+        else if(!doctor) throw new NotFound("Doctor with this ID not found.")
+
+
         const data = await validateData(req.body);
-        console.log(data['sidenote'])
-        const doctor = await Doctor.findOne({_id: data['docId']},{firstName:1, lastName:1,specialty:1}); 
-        if(!doctor) throw new NotFound("Doctor with specified ID does not exist..."); 
-        const note = await Note.create([{
-            diagnosis: data['diagnosis'],
+        const note = new Note({
+            patientId: data['patientId'],
+            diagnosis: data['diagnosis'] ? data['diagnosis'] : null, 
             sidenote: data['sidenote'],
             diagnosedBy: doctor
-        }]  , {session}); 
+        }); 
+
         const patient = await Patient.findOneAndUpdate(
             {_id: data['patientId']}, 
-            { $push: { notes: note._id } }, 
-            {session, projection: {notes: 1}}
+            {$push: {notes: note._id}}, 
+            {session}
         ); 
-        if(!patient){
-            abort = true; 
-            throw new NotFound("Patient with specifed ID does not exist...");
-        } 
+        if(!patient) throw new NotFound("Patient with given ID not found"); 
+
+        await note.save({session}); 
         await session.commitTransaction(); 
-        return res.status(StatusCodes.OK).json({success: true, note})
+        return res.status(StatusCodes.OK).json({success: true, note, msg: "Note has been added"})
     }catch(err){
+        isTransactionFailed = true; 
         return next(err); 
     }finally{
-        if(abort){
-            await session.abortTransaction(); 
+        if(isTransactionFailed){
+            await session.abortTransaction();
         }
-        await session.endSession();
+        await session.endSession(); 
     }
 }
 

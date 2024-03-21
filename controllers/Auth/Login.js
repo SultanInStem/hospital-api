@@ -4,6 +4,7 @@ import { NotFound, BadRequest } from "../../customErrors/Errors.js";
 import getAccessToken from "../../utils/getAccessToken.js"; 
 import getRefreshToken from "../../utils/getRefreshToken.js"; 
 import User from "../../db/models/User.js";
+import ipRecords from "../../access-records/ipRecords.js";
 const validateData = async (data) => {
     try{
         const schema = joi.object({
@@ -19,7 +20,9 @@ const validateData = async (data) => {
 }
 
 const login = async (req, res, next) => {
+    const requestNumber = ipRecords.get(req.ip); 
     try{
+        if(requestNumber > 10) throw new BadRequest("You have made too many attempts to log in!")
         const {username, password} = await validateData(req.body); 
         const user = await User.findOne({username});
         if(!user) throw new NotFound("User not found");
@@ -28,7 +31,12 @@ const login = async (req, res, next) => {
         const accessToken = getAccessToken({userId: user._id, isAdmin: user.isAdmin });
         const refreshToken = getRefreshToken({userId: user._id, isAdmin: user.isAdmin });
         return res.status(StatusCodes.OK).json({success: true, msg: "Logged in", accessToken, refreshToken});
-    }catch(err){
+}catch(err){
+        if(requestNumber > 0){
+            ipRecords.set(req.ip, requestNumber + 1); 
+        }else {
+            ipRecords.set(req.ip, 1); 
+        }
         return next(err); 
     }
 }
