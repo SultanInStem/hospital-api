@@ -12,7 +12,7 @@ import helmet from "helmet";
 
 
 const PORT = process.env.PORT || 3000; 
-const CRON_INTERVAL = 2000;
+const CRON_INTERVAL = 3600000;
 import express from "express";
 const app = express();
 
@@ -30,7 +30,7 @@ app.use(mongo_sanitize());
 app.use(helmet());  
 app.disable('x-powered-by');
 const cleanUp = () => {
-    // console.log(ipRecords.entries())
+    ipRecords.clear(); 
 }
 const start = async () => {
     try{
