@@ -4,20 +4,23 @@ import createDoctor from '../controllers/Admin/createDoctor.js';
 import getDoctors from '../controllers/Admin/getDoctors.js'; 
 import deleteDoctor from '../controllers/Admin/deleteDoctor.js'; 
 import createPatient from '../controllers/Admin/createPatient.js'; 
+import patientSearch from "../controllers/Common/patientSearch.js";
 import Auth from '../middleware/Auth.js'; 
 
-// POST REQUESTS  
+// Docs
 router.post('/create/doctor', Auth, createDoctor);
-router.post('/create/patient', Auth, createPatient); 
-//----------- 
-
-// GET REQUESTS 
 router.get('/doctors', Auth, getDoctors); 
-router.get('/', (req,res) => res.send('Admin here'))
+router.delete('/doctor/:id', Auth, deleteDoctor); 
+//-----------
+
+
+
+
+// Patients 
+router.post('/patients/create', Auth, createPatient); 
+router.get("/patients/search", Auth, patientSearch);
 //------------
 
 
-// DELETE REQUESTS 
-router.delete('/doctor/:id', Auth, deleteDoctor); 
-//----------------
+
 export default router;

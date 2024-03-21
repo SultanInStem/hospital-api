@@ -20,6 +20,10 @@ const DocsCredentials = new mongoose.Schema({
 
 })
 const NotesSchema = new mongoose.Schema({
+    patientId: {
+        type: mongoose.Types.ObjectId,
+        required: true
+    },
     diagnosis: {
         type: String, 
         default: ""
@@ -27,7 +31,7 @@ const NotesSchema = new mongoose.Schema({
     diagnosedBy: DocsCredentials,
     sidenote: {
         type: String,
-        required: true,
+        required: true
     },
 
 }, {timestamps: true}); 

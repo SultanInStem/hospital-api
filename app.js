@@ -2,6 +2,7 @@ import "./dotenv.js";
 import connect from "./db/connect.js";
 import ErrorHandler from "./errorHandlers/ErrorHandler.js"; 
 import NotFound from "./errorHandlers/NotFound.js"; 
+import ipRecords from "./access-records/ipRecords.js";
 
 // SECURITY PACKAGES 
 import cors from "cors";
@@ -11,6 +12,7 @@ import helmet from "helmet";
 
 
 const PORT = process.env.PORT || 3000; 
+const CRON_INTERVAL = 2000;
 import express from "express";
 const app = express();
 
@@ -23,16 +25,20 @@ import TestRouter from "./routes/TestRouter.js";
 app.use(express.json());
 app.use(cors({
     origin: "*"
-}));
+})); 
 app.use(mongo_sanitize());
 app.use(helmet());  
-
+app.disable('x-powered-by');
+const cleanUp = () => {
+    // console.log(ipRecords.entries())
+}
 const start = async () => {
     try{
         await connect(process.env.MONGO_URL);
         app.listen(PORT, () => {
             console.log('server is running'); 
         }); 
+        setInterval(cleanUp, CRON_INTERVAL);
     }catch(err){
         console.log(err)
     }
@@ -48,3 +54,5 @@ app.use("/api/v1/doctor", DoctorRouter);
 app.use('/api/v1/test', TestRouter);
 app.use(ErrorHandler); 
 app.use(NotFound);
+
+
