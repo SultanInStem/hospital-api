@@ -30,6 +30,10 @@ const PatientSchema = new mongoose.Schema({
     notes: {
         type: Array,
         default: []
+    },
+    servicesToGet: {
+        type: [mongoose.Types.ObjectId],
+        default: []
     }
 }, {timestamps: true})
 

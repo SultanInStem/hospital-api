@@ -5,7 +5,8 @@ import { StatusCodes } from "http-status-codes";
 
 const getAllPatients = async(req, res, next) => {
     try{
-        return res.status(StatusCodes.OK).json({success: true})
+        const patients = await Patient.find(); 
+        return res.status(StatusCodes.OK).json({success: true, patients});
     }catch(err){
         return next(err);
     }

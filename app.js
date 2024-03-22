@@ -3,6 +3,7 @@ import connect from "./db/connect.js";
 import ErrorHandler from "./errorHandlers/ErrorHandler.js"; 
 import NotFound from "./errorHandlers/NotFound.js"; 
 import ipRecords from "./access-records/ipRecords.js";
+import Auth from "./middleware/Auth.js";
 
 // SECURITY PACKAGES 
 import cors from "cors";
@@ -20,7 +21,7 @@ const app = express();
 import AdminRouter from './routes/AdminRouter.js'; 
 import DoctorRouter from './routes/DoctorRouter.js'; 
 import AuthRouter from "./routes/AuthRouter.js";  
-import TestRouter from "./routes/TestRouter.js"; 
+import PublicRouter from "./routes/PublicRouter.js"; 
 //--------
 app.use(express.json());
 app.use(cors({
@@ -29,15 +30,21 @@ app.use(cors({
 app.use(mongo_sanitize());
 app.use(helmet());  
 app.disable('x-powered-by');
-const cleanUp = () => {
-    ipRecords.clear(); 
-}
+
+import Pool from "./db/models/Pool.js";
 const start = async () => {
     try{
         await connect(process.env.MONGO_URL);
         app.listen(PORT, () => {
             console.log('server is running'); 
-        }); 
+        });  
+        const pools = await Pool.find(); 
+        if(pools.length < 1){
+            const newPool = await Pool.create({patientQueue: []})
+        }
+        const cleanUp = () => {
+            ipRecords.clear(); 
+        }
         setInterval(cleanUp, CRON_INTERVAL);
     }catch(err){
         console.log(err)
@@ -51,7 +58,7 @@ app.get('/', (req, res) => {
 app.use("/api/v1/admin", AdminRouter);
 app.use("/api/v1/auth", AuthRouter); 
 app.use("/api/v1/doctor", DoctorRouter); 
-app.use('/api/v1/test', TestRouter);
+app.use('/api/v1/public', Auth, PublicRouter);
 app.use(ErrorHandler); 
 app.use(NotFound);
 

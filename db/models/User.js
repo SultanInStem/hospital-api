@@ -7,6 +7,11 @@ const UserSchema = new mongoose.Schema({
         required: true,
         type: Boolean
     },
+    role: {
+        type: String,
+        required: true,
+        enum: ['Admin', 'Doctor', 'Nurse']
+    },
     username: {
         type: String, 
         unique: true,
@@ -18,8 +23,10 @@ const UserSchema = new mongoose.Schema({
     },
     specialty: {
         type: String,
+        enum: ['Cardiologist', 'Dermatologist', 'Pediatrician'],
         required: function(){
-            return !this.isAdmin; 
+            if(this.role === 'Nurse' || this.role === 'Admin' ) return false;
+            else return true;  
         }
     }, 
     firstName: {
