@@ -1,6 +1,6 @@
-import User from '../../db/models/User.js';
+import User from '../../../db/models/User.js';
 import { StatusCodes } from 'http-status-codes';
-import { NotFound, BadRequest } from '../../customErrors/Errors.js';
+import { NotFound, BadRequest } from '../../../customErrors/Errors.js';
 
 const deleteDoctor = async (req, res, next) => {
     try{

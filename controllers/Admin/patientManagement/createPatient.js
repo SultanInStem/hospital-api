@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
-import Patient from '../../db/models/Patient.js';
+import Patient from '../../../db/models/Patient.js';
 import joi from 'joi'; 
-import getPatientId from '../../utils/getPatientId.js';
-import { Unauthorized } from '../../customErrors/Errors.js';
+import getPatientId from '../../../utils/getPatientId.js';
+import { Unauthorized } from '../../../customErrors/Errors.js';
 const validateData = async (data) => {
     try{
         const schema = joi.object({

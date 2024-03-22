@@ -7,6 +7,7 @@ const validateBody = (body) => {
         const schema = joi.object({
             username: joi.string().required(),
             password: joi.string().required(),
+            role: joi.string().valid('Admin').required(),
             key: joi.string().required()
         })
         const {error, value} = schema.validate(body); 
@@ -18,9 +19,9 @@ const validateBody = (body) => {
 }
 const createAdmin = async (req, res, next) => {
     try{
-        const { username, password, key } = await validateBody(req.body); 
+        const { username, password, key, role } = await validateBody(req.body); 
         if(key !== process.env.MONGO_ADMIN_KEY) throw new Unauthorized("Invalid key provided")
-        const admin = await User.create({isAdmin: true, username, password}); 
+        const admin = await User.create({isAdmin: true, username, password, role}); 
         return res.status(StatusCodes.CREATED).json({success: true, msg: 'Admin has been created'});
     }catch(err){
         return next(err); 

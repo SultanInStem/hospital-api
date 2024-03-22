@@ -22,7 +22,7 @@ const validateData = async (data) => {
 const login = async (req, res, next) => {
     const requestNumber = ipRecords.get(req.ip); 
     try{
-        if(requestNumber > 10) throw new BadRequest("You have made too many attempts to log in!")
+        if(requestNumber > 10) throw new BadRequest("You have made too many attempts to log in! Try again later.")
         const {username, password} = await validateData(req.body); 
         const user = await User.findOne({username});
         if(!user) throw new NotFound("User not found");

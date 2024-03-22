@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
-import User from '../../db/models/User.js';
-import { Unauthorized } from "../../customErrors/Errors.js";
+import User from '../../../db/models/User.js';
+import { Unauthorized } from "../../../customErrors/Errors.js";
 import joi from "joi"; 
-const specialties = process.env.DOC_SPECIALTIES.split(',').map(item => item.trim());
+
 
 
 const validateData = (body) => {
@@ -13,8 +13,9 @@ const validateData = (body) => {
             password: joi.string().required().min(6), 
             firstName: joi.string().required().min(2),
             lastName: joi.string().required().min(2),
-            specialty: joi.string().required().valid(...specialties),
-            phoneNumber: joi.string().pattern(/^\+\d{5}-\d{3}-\d{2}-\d{2}$/).required()
+            specialty: joi.string().required(),
+            phoneNumber: joi.string().pattern(/^\+\d{5}-\d{3}-\d{2}-\d{2}$/).required(),
+            role: joi.string().valid('Doctor').required()
         })
         const {error, value} = valSchema.validate(body);
         if(error) throw error; 
