@@ -6,19 +6,19 @@ const PatientInQueue = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         required: true
     },
-    servicesToGet: {
-        type: Array,
+    doctors: {
+        type: Object,
         required: true
     }
 }, {timestamps: true})
-const PoolSchema = new mongoose.Schema({
+const QueueSchema = new mongoose.Schema({
     patientQueue: {
         type: [PatientInQueue]
     }
-})
+}) 
 
-const Pool = mongoose.model("Pool", PoolSchema); 
+const Queue = mongoose.model("NetQueue", QueueSchema); 
 
-export default Pool; 
+export default Queue; 
 
 
