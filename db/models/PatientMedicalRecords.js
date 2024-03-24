@@ -12,6 +12,11 @@ const Schema = new mongoose.Schema({
     patientId: {
         type: mongoose.Types.ObjectId,
         required: true
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'completed'],
+        default: "pending"
     }
 }, {timestamps: true})
 

@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     specialty: {
-        type: String,
+        type: [String],
         enum: ['Cardiologist', 'Dermatologist', 'Pediatrician'],
         required: function(){
             if(this.role === 'Nurse' || this.role === 'Admin' ) return false;

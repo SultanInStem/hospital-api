@@ -3,7 +3,7 @@ import { NotFound, Unauthorized } from "../../../customErrors/Errors.js";
 import joi from "joi"; 
 import Service from "../../../db/models/Service.js";
 import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
-import Pool from "../../../db/models/Pool.js";
+import Queue from "../../../db/models/Queue.js";
 import Patient from "../../../db/models/Patient.js";
 
 
@@ -23,15 +23,15 @@ const validateData = async (body) => {
 
 const addToQueueAfterPayment = async(req,res, next) => {
     try{
-        const {isAdmin} = req; 
-        if(!isAdmin) throw new Unauthorized("Not authorized to create medical records"); 
         const data = await validateData(req.body); 
         const patient = await Patient.findOne({_id: data['patientId']}); 
         if(!patient) throw new NotFound("Patient not found"); 
         const services = await Service.find({_id: {$in: data['services']}});
         let totalPrice = 0; 
+        const doctors = {};
         for(let i = 0; i < services.length; i++){
             totalPrice += services[i].price; 
+            doctors[services[i].providedBy] = 1;
         }     
 
         const medicalRecord = await PatientMedicalRecord.create(
@@ -39,10 +39,9 @@ const addToQueueAfterPayment = async(req,res, next) => {
         ); 
         const queueObj = {
             patientId: patient._id,
-            servicesToGet: services
+            doctors: doctors
         }
-        const updatedPool = await Pool.findOneAndUpdate({},{$push: {patientQueue: queueObj }});
-        console.log(updatedPool);
+        const updatedNetQueue = await Queue.findOneAndUpdate({},{$push: { patientQueue: queueObj }});
 
         return res.status(StatusCodes.OK).json({success: true, medicalRecord});
     }catch(err){

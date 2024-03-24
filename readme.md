@@ -1,3 +1,3 @@
-## To-do 
-1 - Prevent brute force attacks in the auth.
+## To-do
 
+1 - Fix the queue functionality

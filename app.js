@@ -4,6 +4,7 @@ import ErrorHandler from "./errorHandlers/ErrorHandler.js";
 import NotFound from "./errorHandlers/NotFound.js"; 
 import ipRecords from "./access-records/ipRecords.js";
 import Auth from "./middleware/Auth.js";
+import AuthAdmin from "./middleware/AuthAdmin.js";
 
 // SECURITY PACKAGES 
 import cors from "cors";
@@ -31,7 +32,7 @@ app.use(mongo_sanitize());
 app.use(helmet());  
 app.disable('x-powered-by');
 
-import Pool from "./db/models/Pool.js";
+import Pool from "./db/models/Queue.js";
 const start = async () => {
     try{
         await connect(process.env.MONGO_URL);
@@ -55,9 +56,9 @@ start();
 app.get('/', (req, res) => {
     return res.status(200).send("<h1>Server is live!</h1>")
 })
-app.use("/api/v1/admin", AdminRouter);
+app.use("/api/v1/admin", AuthAdmin, AdminRouter);
 app.use("/api/v1/auth", AuthRouter); 
-app.use("/api/v1/doctor", DoctorRouter); 
+app.use("/api/v1/doctor", Auth, DoctorRouter); 
 app.use('/api/v1/public', Auth, PublicRouter);
 app.use(ErrorHandler); 
 app.use(NotFound);
