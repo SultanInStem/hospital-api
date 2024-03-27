@@ -1,3 +1,4 @@
 ## To-do
-
-1 - Fix the queue functionality
+- Medical record based queues
+- left off at finishProcedure
+- finish the doctor-patient interaction

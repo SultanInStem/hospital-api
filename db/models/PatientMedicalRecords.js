@@ -1,8 +1,21 @@
 import mongoose from "mongoose";
-import Service from "./Service.js"; 
+const procedureSchema = new mongoose.Schema({
+    _id: {
+        type: mongoose.Types.ObjectId, 
+        required: true
+    },
+    title: {
+        type: String,
+        required: true
+    },
+    providedBy: {
+        type: mongoose.Types.ObjectId,
+        required: true
+    }
+})
 const Schema = new mongoose.Schema({
-    services: {
-        type: [Service.castObject()],
+    awaitingProcedures: {
+        type: [procedureSchema],
         required: true
     },
     totalPrice: {
@@ -13,10 +26,22 @@ const Schema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         required: true
     },
+    patientFirstName: {
+        type: String, 
+        required: true
+    },
+    patientLastName: {
+        type: String,
+        required: true
+    },
     status: {
         type: String,
-        enum: ['pending', 'completed'],
+        enum: ['pending', 'completed', 'rejected'],
         default: "pending"
+    },
+    allDoctorsInvolved: {
+        type: Map,
+        required: true
     }
 }, {timestamps: true})
 

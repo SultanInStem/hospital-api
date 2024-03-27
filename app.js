@@ -32,17 +32,12 @@ app.use(mongo_sanitize());
 app.use(helmet());  
 app.disable('x-powered-by');
 
-import Pool from "./db/models/Queue.js";
 const start = async () => {
     try{
         await connect(process.env.MONGO_URL);
         app.listen(PORT, () => {
             console.log('server is running'); 
         });  
-        const pools = await Pool.find(); 
-        if(pools.length < 1){
-            const newPool = await Pool.create({patientQueue: []})
-        }
         const cleanUp = () => {
             ipRecords.clear(); 
         }
