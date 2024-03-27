@@ -30,7 +30,7 @@ const login = async (req, res, next) => {
         if(!isPassMatch) throw new BadRequest("Invalid username or password"); 
         const accessToken = getAccessToken({userId: user._id, isAdmin: user.isAdmin });
         const refreshToken = getRefreshToken({userId: user._id, isAdmin: user.isAdmin });
-        return res.status(StatusCodes.OK).json({success: true, msg: "Logged in", accessToken, refreshToken});
+        return res.status(StatusCodes.OK).json({success: true, msg: "Logged in", accessToken, refreshToken, username});
 }catch(err){
         if(requestNumber > 0){
             ipRecords.set(req.ip, requestNumber + 1); 
