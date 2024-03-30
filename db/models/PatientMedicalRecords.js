@@ -18,6 +18,16 @@ const Schema = new mongoose.Schema({
         type: [procedureSchema],
         required: true
     },
+    finishedProcedures: {
+        type: [String],
+        required: true,
+        default: []
+    },
+    rejectedProcedures: {
+        type: [String],
+        required: true,
+        default: []
+    },
     totalPrice: {
         type: Number,
         required: true

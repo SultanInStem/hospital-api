@@ -8,7 +8,7 @@ const getAllPendingRecords = async(req, res, next) => {
         const medicalRecords = await PatientMedicalRecord.find({
             status: 'pending',
             [`allDoctorsInvolved.${docId}`]: { $exists: true }
-        }, { totalPrice: 0, allDoctorsInvolved: 0, awaitingTreatment: 0 }).sort({ createdAt: 1 }) 
+        }, { totalPrice: 0, finishedProcedures: 0, allDoctorsInvolved: 0, awaitingProcedures: 0 }).sort({ createdAt: 1 }) 
         return res.status(StatusCodes.OK).json({success: true, queue: medicalRecords})
     }catch(err){
         return next(err); 
