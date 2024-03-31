@@ -11,8 +11,8 @@ import getServices from "../controllers/Admin/serviceManagement/getServices.js";
 import updateService from "../controllers/Admin/serviceManagement/updateService.js";
 import updatePatient from "../controllers/Admin/patientManagement/updatePatient.js";
 import deletePatient from "../controllers/Admin/patientManagement/deletePatient.js";
-import getPatientQueue from "../controllers/Admin/patientManagement/getPatientQueue.js";
 import createMedicalRecord from "../controllers/Admin/patientManagement/createMedicalRecord.js";
+import getMedicalRecords from "../controllers/Admin/patientManagement/getMedicalRecords.js";
 // Docs
 router.post('/doctors/create', createDoctor);
 router.get('/doctors', getDoctors);  
@@ -27,12 +27,11 @@ router.patch("/doctors/:id", updateDoctor);
 router.post("/patients/create", createPatient); 
 router.delete("/patients/:id", deletePatient);
 router.patch("/patients/:id", updatePatient);
-router.get('/patients/queue', getPatientQueue);
 //------------
 
 // Medical records 
 router.post("/medicalrecords/create", createMedicalRecord);
-
+router.get("/medicalrecords", getMedicalRecords);
 
 // Services 
 router.get('/services', getServices); 

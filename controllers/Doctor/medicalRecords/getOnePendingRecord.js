@@ -1,11 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
-
+import { NotFound } from "../../../customErrors/Errors.js";
 const getOnePendingRecord = async(req, res, next) => {
     try{
         const docId = req.userId; 
         const { id } = req.params; 
-        const record = await PatientMedicalRecord.findOne({_id: id}, {totalPrice: 0, allDoctorsInvolved: 0}); 
+        const record = await PatientMedicalRecord.findOne({_id: id}, {totalPrice: 0, allDoctorsInvolved: 0});
+        if(!record) throw new NotFound("This record does not exist"); 
         const awaitingProcedures = record.awaitingProcedures; 
         const docSpecProcedures = []
         for(let i = 0; i < awaitingProcedures.length; i++){

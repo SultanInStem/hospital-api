@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 const ServiceSchema = new mongoose.Schema({
     price: {
         type: Number,
-        required: true
+        required: true,
+        min: 0
     },
     title: {
         type: String,
