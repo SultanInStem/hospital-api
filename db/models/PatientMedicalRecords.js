@@ -28,8 +28,8 @@ const Schema = new mongoose.Schema({
         required: true,
         default: []
     },
-    totalPrice: {
-        type: Number,
+    paymentSlip: {
+        type: mongoose.Types.ObjectId,
         required: true
     },
     patientId: {
@@ -46,7 +46,7 @@ const Schema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'completed', 'rejected'],
+        enum: ['pending', 'completed', 'uncompleted'],
         default: "pending"
     },
     allDoctorsInvolved: {

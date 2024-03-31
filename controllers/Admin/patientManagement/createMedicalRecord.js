@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
-import { NotFound, Unauthorized } from "../../../customErrors/Errors.js";
+import { BadRequest, NotFound } from "../../../customErrors/Errors.js";
+import Payment from "../../../db/models/Payments.js";
 import joi from "joi"; 
 import Service from "../../../db/models/Service.js";
 import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
@@ -34,11 +35,14 @@ const createMedicalRecord = async(req,res, next) => {
             // doctors.push(services[i].providedBy);
             doctors[services[i].providedBy] = 1;
             
-        }     
-
+        } 
+        // create a payment slip     
+        const payment = await Payment.create({patientId: patient._id, netAmount: totalPrice, services});
+        if(!payment) throw new BadRequest("Payment failed, please try again");
+        // link the payment slip to the medical record
         const medicalRecord = await PatientMedicalRecord.create(
             {
-                totalPrice,
+                paymentSlip: payment._id,
                 awaitingProcedures: services,
                 patientId: data['patientId'], 
                 allDoctorsInvolved: doctors,
