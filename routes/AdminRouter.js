@@ -12,7 +12,8 @@ import updateService from "../controllers/Admin/serviceManagement/updateService.
 import updatePatient from "../controllers/Admin/patientManagement/updatePatient.js";
 import deletePatient from "../controllers/Admin/patientManagement/deletePatient.js";
 import createMedicalRecord from "../controllers/Admin/patientManagement/createMedicalRecord.js";
-import getMedicalRecords from "../controllers/Admin/patientManagement/getMedicalRecords.js";
+import makeRefund from "../controllers/Admin/finanaceManagment/makeRefund.js";
+import getPaymentSlip from "../controllers/Admin/finanaceManagment/getPaymentSlip.js";
 // Docs
 router.post('/doctors/create', createDoctor);
 router.get('/doctors', getDoctors);  
@@ -31,7 +32,6 @@ router.patch("/patients/:id", updatePatient);
 
 // Medical records 
 router.post("/medicalrecords/create", createMedicalRecord);
-router.get("/medicalrecords", getMedicalRecords);
 
 // Services 
 router.get('/services', getServices); 
@@ -39,5 +39,11 @@ router.post('/services/create', createService);
 router.delete("/services/:id", deleteService); 
 router.patch("/services/:id", updateService);
 // --------
+
+
+// Finance 
+router.post("/finance/refund", makeRefund); 
+router.get("/finance/paymentslip/:id", getPaymentSlip); 
+// -------
 
 export default router;
