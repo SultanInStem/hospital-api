@@ -30,14 +30,22 @@ const createMedicalRecord = async(req,res, next) => {
         let totalPrice = 0; 
         // const doctors = [];
         const doctors = {};
+        const serviceMap = {}; 
         for(let i = 0; i < services.length; i++){
+            serviceMap[services[i]._id] = services[i]; 
             totalPrice += services[i].price; 
             // doctors.push(services[i].providedBy);
             doctors[services[i].providedBy] = 1;
             
         } 
         // create a payment slip     
-        const payment = await Payment.create({patientId: patient._id, netAmount: totalPrice, services});
+        const payment = await Payment.create(
+            {
+                patientId: patient._id, 
+                netAmount: totalPrice, 
+                paidServices: serviceMap,
+            }
+        );
         if(!payment) throw new BadRequest("Payment failed, please try again");
         // link the payment slip to the medical record
         const medicalRecord = await PatientMedicalRecord.create(

@@ -5,12 +5,12 @@ const refundSchema = new mongoose.Schema({
     previousAmount: {
         type: Number,
         required: true,
-        min: 0  
+        min: 0,
     },
     deductedAmount: {
         type: Number,
         required: true,
-        min: 0
+        min: 0,
     },
     finalAmount: {
         type: Number,
@@ -18,10 +18,14 @@ const refundSchema = new mongoose.Schema({
         min: 0
     },
     refundedServices: {
-        type: [Service.castObject()],
+        type: [String],
         default: []
+    },
+    updatedAt: {
+        type: Date,
+        required: true
     }
-}, {timestamps: true})
+});
 
 const PaymentSchema = new mongoose.Schema({
     patientId: {
@@ -33,10 +37,11 @@ const PaymentSchema = new mongoose.Schema({
         min: 0,
         required: true,
     },
-    services: {
-        type: [Service.castObject()],
+    paidServices:{ 
+        type: Map,
+        of: Service.castObject(),
         required: true
-    },
+    }, 
     refundHistory: {
         type: [refundSchema],
         default: []

@@ -6,5 +6,5 @@ const router = express.Router();
 
 router.get('/patients', getAllPatients);
 router.get("/patients/search", patientSearch);
-router.get("/patients/records/all/:id", getMedicalRecords); // ":id" is of the patient
+router.get("/medicalrecords", getMedicalRecords); // ":id" is of the patient
 export default router; 
