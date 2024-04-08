@@ -1,6 +1,31 @@
 import mongoose from "mongoose";
 import Service from "./Service.js";
 
+
+const paidServiceSchema = new mongoose.Schema({
+    _id: {
+        type: mongoose.Types.ObjectId, 
+        required: true
+    },
+    price: {
+        type: Number,
+        min: 0,
+        required: true
+    },
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    providedBy:{
+        type: mongoose.Types.ObjectId,
+        required: true
+    }
+})
+
 const refundSchema = new mongoose.Schema({
     previousAmount: {
         type: Number,
@@ -39,7 +64,7 @@ const PaymentSchema = new mongoose.Schema({
     },
     paidServices:{ 
         type: Map,
-        of: Service.castObject(),
+        of: paidServiceSchema,
         required: true
     }, 
     refundHistory: {
