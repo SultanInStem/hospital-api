@@ -26,7 +26,7 @@ const createMedicalRecord = async(req,res, next) => {
         const data = await validateData(req.body); 
         const patient = await Patient.findOne({_id: data['patientId']}); 
         if(!patient) throw new NotFound("Patient not found"); 
-        const services = await Service.find({_id: {$in: data['services']}});
+        const services = await Service.find({_id: {$in: data['services']}}, {updatedAt: 0, createdAt: 0, __v: 0});
         let totalPrice = 0; 
         // const doctors = [];
         const doctors = {};

@@ -13,7 +13,7 @@ import updatePatient from "../controllers/Admin/patientManagement/updatePatient.
 import deletePatient from "../controllers/Admin/patientManagement/deletePatient.js";
 import createMedicalRecord from "../controllers/Admin/patientManagement/createMedicalRecord.js";
 import makeRefund from "../controllers/Admin/finanaceManagment/makeRefund.js";
-import getPaymentSlip from "../controllers/Admin/finanaceManagment/getPaymentSlip.js";
+import getPayments from "../controllers/Admin/finanaceManagment/getPayments.js";
 // Docs
 router.post('/doctors/create', createDoctor);
 router.get('/doctors', getDoctors);  
@@ -43,7 +43,7 @@ router.patch("/services/:id", updateService);
 
 // Finance 
 router.post("/finance/refund", makeRefund); 
-router.get("/finance/paymentslip/:id", getPaymentSlip); 
+router.get("/finance/payment-records", getPayments); 
 // -------
 
 export default router;
