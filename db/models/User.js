@@ -4,13 +4,15 @@ import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema({
     isAdmin: {
-        required: true,
-        type: Boolean
+        type: Boolean,
+        required: function(){
+            return this.role === 'Admin'
+        },
     },
     role: {
         type: String,
         required: true,
-        enum: ['Admin', 'Doctor', 'Nurse']
+        enum: ['Admin', 'Doctor', 'Manager']
     },
     username: {
         type: String, 
@@ -24,9 +26,9 @@ const UserSchema = new mongoose.Schema({
     specialty: {
         type: [String],
         required: function(){
-            if(this.role === 'Nurse' || this.role === 'Admin' ) return false;
-            else return true;  
-        }
+            if(this.role === 'Manager' || this.role === 'Admin' ) return false;
+            return true;  
+        },
     }, 
     firstName: {
         type: String, 
@@ -42,8 +44,19 @@ const UserSchema = new mongoose.Schema({
     },
     phoneNumber: {
         type: String,
+        required: true
+    },
+    isActive: {
+        type: Boolean,
         required: function(){
-            return !this.isAdmin; 
+            return this.role === 'Doctor'
+        },
+        default: true
+    },
+    isManager: {
+        type: Boolean,
+        requried: function(){
+            return this.role === 'Manager'
         }
     }
 });

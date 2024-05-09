@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import CustomError from '../customErrors/CustomError.js'; 
-import { MongoServerError } from "mongodb";
+import mongo from "mongodb";
+const { MongoServerError } = mongo;
 import jwt from 'jsonwebtoken';
 const ErrorHandler = (err, req, res, next) => {
     if(err instanceof CustomError){
@@ -10,8 +11,6 @@ const ErrorHandler = (err, req, res, next) => {
         return res.status(StatusCodes.BAD_REQUEST).json({success: false, msg});
     }else if(err instanceof MongoServerError && err.code === 11000){
         return res.status(StatusCodes.CONFLICT).json({success: false, msg: err.message})
-    }else if(err instanceof CastError){
-        return res.status(StatusCodes.BAD_REQUEST).json({success: false, msg: err.message});
     }else if(err instanceof jwt.JsonWebTokenError){
         return res.status(StatusCodes.BAD_REQUEST).json({success: false, msg: "Invalid token signature"})
     }

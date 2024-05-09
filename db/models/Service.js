@@ -18,6 +18,10 @@ const ServiceSchema = new mongoose.Schema({
     providedBy: {
         type: mongoose.Types.ObjectId,
         required: true
+    },
+    isAvailable: {
+        type: Boolean,
+        default: true
     }
 }, {timestamps: true})
 

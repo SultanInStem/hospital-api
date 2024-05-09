@@ -15,10 +15,10 @@ import createMedicalRecord from "../controllers/Admin/patientManagement/createMe
 import makeRefund from "../controllers/Admin/finanaceManagment/makeRefund.js";
 import getPayments from "../controllers/Admin/finanaceManagment/getPayments.js";
 // Docs
-router.post('/doctors/create', createDoctor);
+// router.post('/doctors/create', createDoctor);
 router.get('/doctors', getDoctors);  
-router.delete('/doctors/:id', deleteDoctor); 
-router.patch("/doctors/:id", updateDoctor);
+// router.delete('/doctors/:id', deleteDoctor); 
+// router.patch("/doctors/:id", updateDoctor);
 //-----------
 
 
@@ -35,9 +35,9 @@ router.post("/medicalrecords/create", createMedicalRecord);
 
 // Services 
 router.get('/services', getServices); 
-router.post('/services/create', createService);
-router.delete("/services/:id", deleteService); 
-router.patch("/services/:id", updateService);
+// router.post('/services/create', createService);
+// router.delete("/services/:id", deleteService); 
+// router.patch("/services/:id", updateService);
 // --------
 
 

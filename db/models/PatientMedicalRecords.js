@@ -46,7 +46,7 @@ const Schema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'completed', 'uncompleted'],
+        enum: ['pending', 'completed', 'refund'],
         default: "pending"
     },
     allDoctorsInvolved: {
