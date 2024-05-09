@@ -5,7 +5,7 @@ import NotFound from "./errorHandlers/NotFound.js";
 import ipRecords from "./access-records/ipRecords.js";
 import Auth from "./middleware/Auth.js";
 import AuthAdmin from "./middleware/AuthAdmin.js";
-
+import AuthManager from "./middleware/AuthManager.js";
 // SECURITY PACKAGES 
 import cors from "cors";
 import mongo_sanitize from "express-mongo-sanitize"; 
@@ -23,6 +23,7 @@ import AdminRouter from './routes/AdminRouter.js';
 import DoctorRouter from './routes/DoctorRouter.js'; 
 import AuthRouter from "./routes/AuthRouter.js";  
 import PublicRouter from "./routes/PublicRouter.js"; 
+import ManagerRouter from "./routes/ManagerRouter.js";
 //--------
 app.use(express.json());
 app.use(cors({
@@ -51,10 +52,13 @@ start();
 app.get('/', (req, res) => {
     return res.status(200).send("<h1>Server is live!</h1>")
 })
+app.use("/api/v1/manager", AuthManager, ManagerRouter); 
 app.use("/api/v1/admin", AuthAdmin, AdminRouter);
-app.use("/api/v1/auth", AuthRouter); 
 app.use("/api/v1/doctor", Auth, DoctorRouter); 
+app.use("/api/v1/auth", AuthRouter); 
 app.use('/api/v1/public', Auth, PublicRouter);
+
+
 app.use(ErrorHandler); 
 app.use(NotFound);
 
