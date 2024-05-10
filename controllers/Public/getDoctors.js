@@ -1,8 +1,7 @@
-import User from '../../../db/models/User.js';
-import { StatusCodes } from 'http-status-codes';
-import joi from "joi"; 
-import validateData from '../../../utils/validateData.js';
-
+import joi from "joi";
+import validateData from "../../utils/validateData.js";
+import { StatusCodes } from "http-status-codes";
+import User from "../../db/models/User.js";
 const querySchema = joi.object({
     firstName: joi.string().optional(),
     lastName: joi.string().optional(),

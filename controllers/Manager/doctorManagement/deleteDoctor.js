@@ -1,7 +1,6 @@
-import User from '../../../db/models/User.js';
-import { StatusCodes } from 'http-status-codes';
-import { NotFound } from '../../../customErrors/Errors.js';
-
+import User from "../../../db/models/User.js";
+import { StatusCodes } from "http-status-codes";
+import { NotFound } from "../../../customErrors/Errors.js";
 const deleteDoctor = async (req, res, next) => {
     try{
         const { id } = req.params;
