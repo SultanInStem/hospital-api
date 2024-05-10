@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const procedureSchema = new mongoose.Schema({
+const serviceSchema = new mongoose.Schema({
     _id: {
         type: mongoose.Types.ObjectId, 
         required: true
@@ -14,16 +14,16 @@ const procedureSchema = new mongoose.Schema({
     }
 })
 const Schema = new mongoose.Schema({
-    awaitingProcedures: {
-        type: [procedureSchema],
+    awaitingServices: {
+        type: [serviceSchema],
         required: true
     },
-    finishedProcedures: {
+    finishedServices: {
         type: [String],
         required: true,
         default: []
     },
-    rejectedProcedures: {
+    toRefundServices: {
         type: [String],
         required: true,
         default: []
@@ -46,8 +46,9 @@ const Schema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'completed', 'refund'],
-        default: "pending"
+        enum: ['pending', 'completed', 'toRefund'],
+        default: "pending",
+        index: true
     },
     allDoctorsInvolved: {
         type: Map,

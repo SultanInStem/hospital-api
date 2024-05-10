@@ -28,7 +28,7 @@ import ManagerRouter from "./routes/ManagerRouter.js";
 app.use(express.json());
 app.use(cors({
     origin: "*"
-})); 
+}));  
 app.use(mongo_sanitize());
 app.use(helmet());  
 app.disable('x-powered-by');
