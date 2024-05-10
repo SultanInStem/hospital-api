@@ -5,62 +5,71 @@ import joi from "joi";
 import Service from "../../../db/models/Service.js";
 import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
 import Patient from "../../../db/models/Patient.js";
+import validateData from "../../../utils/validateData.js";
+import mongoose from "mongoose";
 
-
-const validateData = async (body) => {
-    try{
-        const schema = joi.object({
-            patientId: joi.string().required(),
-            services: joi.array().items(joi.string()),   
-        })
-        const {error, value} = schema.validate(body);
-        if(error) throw error; 
-        return value;
-    }catch(err){
-        throw err; 
-    }
-}
+const joiSchema = joi.object({
+    patientId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(), 
+    services: joi.array().min(1).items(joi.string()), // the ID's of the services   
+})
 
 const createMedicalRecord = async(req,res, next) => {
+    const session = await mongoose.startSession(); 
+    session.startTransaction(); 
+    let isTransFailed = false; 
     try{
-        const data = await validateData(req.body); 
-        const patient = await Patient.findOne({_id: data['patientId']}); 
-        if(!patient) throw new NotFound("Patient not found"); 
-        const services = await Service.find({_id: {$in: data['services']}}, {updatedAt: 0, createdAt: 0, __v: 0});
-        let totalPrice = 0; 
-        // const doctors = [];
-        const doctors = {};
-        const serviceMap = {}; 
-        for(let i = 0; i < services.length; i++){
-            serviceMap[services[i]._id] = services[i]; 
-            totalPrice += services[i].price; 
-            // doctors.push(services[i].providedBy);
-            doctors[services[i].providedBy] = 1;
-            
-        } 
-        // create a payment slip     
-        const payment = await Payment.create(
-            {
-                patientId: patient._id, 
-                netAmount: totalPrice, 
-                paidServices: serviceMap,
+        const data = await validateData(joiSchema, req.body); 
+        const serviceIDs = data['services']; 
+        const patientId = data['patientId']; 
+        // check if patient exists 
+        const patient = await Patient.findById(data['patientId'], 
+        {
+            uniqueId: 0, 
+            phoneNumber: 0, 
+            createdAt: 0, 
+            updatedAt: 0, 
+            dateOfBirth: 0,
+            gender: 0
+        });
+        if(typeof patient === 'undefined' || patient === null) throw new NotFound("Patient not found");
+        //-------------------------- 
+
+        let netTotal = 0; 
+        // Add patient to the queue in each service
+        for(let i = 0; i < serviceIDs.length; i++){
+            const id = serviceIDs[i];
+            const currentTime = new Date(); 
+            const patientObj = {
+                createdAt: currentTime,
+                patientId: patientId,
+                fullName: patient.firstName + ' ' + patient.lastName
+            };
+            const condition = {
+                _id: id,
+                isAvailable: true
             }
-        );
-        if(!payment) throw new BadRequest("Payment failed, please try again");
-        // link the payment slip to the medical record
-        const medicalRecord = await PatientMedicalRecord.create(
-            {
-                paymentSlip: payment._id,
-                awaitingProcedures: services,
-                patientId: data['patientId'], 
-                allDoctorsInvolved: doctors,
-                patientFirstName: patient.firstName, 
-                patientLastName: patient.lastName
-            }
-        ); 
-        return res.status(StatusCodes.OK).json({success: true, medicalRecord});
+            const service = Service.findOneAndUpdate(
+                condition, 
+                {$push: {currentQueue: patientObj}}, 
+                {session, new: true, projection: {description: 0}}
+            );
+            if(typeof service === 'undefined' || service === null) throw new NotFound("Service not found");
+            netTotal += service.price; 
+        }
+        //-------------------------- 
+
+        
+
+        await session.commitTransaction();
+        return res.status(StatusCodes.OK).json({success: true});
     }catch(err){
+        isTransFailed = true; 
         return next(err); 
+    }finally{
+        if(isTransFailed){
+            await session.abortTransaction(); 
+        }
+        await session.endSession();
     }
 }
 

@@ -22,6 +22,10 @@ const ServiceSchema = new mongoose.Schema({
     isAvailable: {
         type: Boolean,
         default: true
+    },
+    currentQueue: {
+        type: [mongoose.Types.ObjectId],
+        default: []
     }
 }, {timestamps: true})
 
