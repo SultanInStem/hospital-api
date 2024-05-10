@@ -30,6 +30,11 @@ const PatientSchema = new mongoose.Schema({
     notes: {
         type: Array,
         default: []
+    },
+    bonusAvailable: {
+        type: Number,
+        min: 0, 
+        default: 0
     }
 }, {timestamps: true})
 

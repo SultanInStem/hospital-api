@@ -1,4 +1,2 @@
 ## To-do
-- test the doctor-patient interaction 
-- Use one endpoint for getting all documents AND searching for documents.
-- work on getPayment.js
+- left off at createMedicalRecord.js 

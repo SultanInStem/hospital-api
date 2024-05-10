@@ -9,6 +9,7 @@ import validateData from "../../../utils/validateData.js";
 import mongoose from "mongoose";
 
 const joiSchema = joi.object({
+    usedBonus: joi.number().min(0).allow(0).required(),
     patientId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(), 
     services: joi.array().min(1).items(joi.string()), // the ID's of the services   
 })
@@ -21,6 +22,8 @@ const createMedicalRecord = async(req,res, next) => {
         const data = await validateData(joiSchema, req.body); 
         const serviceIDs = data['services']; 
         const patientId = data['patientId']; 
+        const usedBonus = data['usedBonus']; 
+
         // check if patient exists 
         const patient = await Patient.findById(data['patientId'], 
         {
@@ -34,8 +37,9 @@ const createMedicalRecord = async(req,res, next) => {
         if(typeof patient === 'undefined' || patient === null) throw new NotFound("Patient not found");
         //-------------------------- 
 
-        let netTotal = 0; 
         // Add patient to the queue in each service
+        let netTotal = 0; 
+        const paidServices = [];
         for(let i = 0; i < serviceIDs.length; i++){
             const id = serviceIDs[i];
             const currentTime = new Date(); 
@@ -55,10 +59,20 @@ const createMedicalRecord = async(req,res, next) => {
             );
             if(typeof service === 'undefined' || service === null) throw new NotFound("Service not found");
             netTotal += service.price; 
+            paidServices.push(); // LEFT OFF HERE!!!
         }
-        //-------------------------- 
 
-        
+        // Create Payment Record
+        if(usedBonus > netTotal) throw new BadRequest("Used bonus cannot exceed the net total");
+        const paymentData = {
+            patientId,
+            initialAmount: netTotal,
+            bonusDeduction: usedBonus,
+            amountPaid: netTotal - usedBonus,
+            paidServices: []
+        };
+        const paymentRecord = await Payment.create({});
+        //-------------------------- 
 
         await session.commitTransaction();
         return res.status(StatusCodes.OK).json({success: true});
