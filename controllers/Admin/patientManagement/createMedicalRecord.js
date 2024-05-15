@@ -6,25 +6,36 @@ import Service from "../../../db/models/Service.js";
 import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
 import Patient from "../../../db/models/Patient.js";
 import validateData from "../../../utils/validateData.js";
+import BonusCard from "../../../db/models/BonusCard.js";
 import mongoose from "mongoose";
 const bonusPercentage = Number(process.env.BONUS_PERCENTAGE);
+
 const joiSchema = joi.object({
-    adjustment: joi.number().required(),
+    cardId: joi.string().optional(),
+    paymentMethod: joi.string().valid('Cash','Card').required(),
+    servicePrice: joi.number().min(0).required(),
     patientId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(), 
     serviceId: joi.string().min(20).required(),
+    bonusDeduction: joi.number().min(0).allow(0).required()
 })
 
 const createMedicalRecord = async(req,res, next) => {
     const session = await mongoose.startSession(); 
     session.startTransaction(); 
-    let isTransFailed = false; 
+    let isTransactionFailed = false;
     try{
         const data = await validateData(joiSchema, req.body); 
-        const serviceId = data['serviceId']; 
-        const patientId = data['patientId']; 
-
+        const { 
+            serviceId, 
+            patientId, 
+            paymentMethod, 
+            cardId, 
+            bonusDeduction,
+            servicePrice 
+        } = data;
+        if(servicePrice - bonusDeduction < 0) throw new BadRequest('Bonus deduction cannot exceed the price of the service');
         // check if patient exists 
-        const patient = await Patient.findById(data['patientId'], 
+        const patient = await Patient.findById(patientId, 
         {
             uniqueId: 0, 
             phoneNumber: 0, 
@@ -33,36 +44,68 @@ const createMedicalRecord = async(req,res, next) => {
             dateOfBirth: 0,
             gender: 0
         });
-
         if(typeof patient === 'undefined' || patient === null) throw new NotFound("Patient not found, create the patient");
         //-------------------------- 
+         
 
-        // Add patient to the queue in each service
-        let netTotal = 0; 
-        //----------------------
+        // if bonus card exists, make sure the bonusDeduction does exceed the banalce on the card
+        // and the balance of the card
+        const bonusCard = await BonusCard.findOne({cardId: cardId});
+        if(bonusCard){
+            if(bonusCard.balance < bonusDeduction) throw new BadRequest("Bonus deduction cannot exceed the balance on the card");
+            const adjustment = (bonusCard.balance - bonusDeduction) + (servicePrice - bonusDeduction) * bonusPercentage;
+            const updatedBonusCard = await BonusCard.findOneAndUpdate(
+                {cardId: cardId}, 
+                {balance: adjustment},
+                {session}
+            );
+        }
+        //--------------------------
 
-        // Create Payment Record
-        if(bonusToUse > netTotal) throw new BadRequest("Used bonus cannot exceed the net total"); 
-        const amountPaid = netTotal - bonusToUse; 
+        // create payment record
         const paymentData = {
             patientId,
-            initialAmount: netTotal,
-            bonusDeduction: bonusToUse,
-            amountPaid: amountPaid,
-            paidServices: []
+            amountBeforeDeduction: servicePrice,
+            bonusDeduction,
+            amountFinal: servicePrice - bonusDeduction,
+            servicePaid: serviceId,
+            paymentMethod
         };
-        const newlyGainedBonus = amountPaid * bonusPercentage + (patient.bonusAvailable - bonusToUse);
-        await Patient.findByIdAndUpdate(patientId,{bonusAvailable: newlyGainedBonus}, {session}); 
-        // const paymentRecord = await Payment.create({});
-        //-------------------------- 
+        const payment = new Payment.create(paymentData, {session}); 
+        if(!payment) throw new BadRequest('Payment was unsuccessful');
+        //----------------------
 
-        await session.commitTransaction();
+
+        // Create med-record and add it to the queue of the service
+        const medRecord = await PatientMedicalRecord.create(
+            {
+                patientId,
+                patientFirstName: patient.firstName,
+                patientLastName: patient.lastName,
+                paymentRecord: payment._id,
+                status: 'queue',
+                service: serviceId
+            }, {session}
+        );
+
+        if(!medRecord) throw new BadRequest("med record hasn't been created");
+        const service = await Service.findByIdAndUpdate(serviceId,
+            {
+                $push: {currentQueue: medRecord._id}
+            }, 
+            {session}
+        );
+        if(!service) throw new BadRequest("Failed to update the service");
+        // ----------------------------
+
+
+        await session.commitTransaction(); 
         return res.status(StatusCodes.OK).json({success: true});
     }catch(err){
-        isTransFailed = true; 
+        isTransactionFailed = true;
         return next(err); 
     }finally{
-        if(isTransFailed){
+        if(isTransactionFailed){
             await session.abortTransaction(); 
         }
         await session.endSession();

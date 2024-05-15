@@ -11,5 +11,6 @@ const PackageSchema = new mongoose.Schema({
     }
 }); 
 
+const MedPackage = mongoose.model('MedPackages', PackageSchema); 
 
-export default MedPackage = mongoose.model('MedPackages', PackageSchema); 
+export default MedPackage;
