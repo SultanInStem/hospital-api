@@ -14,7 +14,11 @@ const serviceSchema = new mongoose.Schema({
     }
 })
 const Schema = new mongoose.Schema({
-    paymentSlip: {
+    paymentRecord: {
+        type: mongoose.Types.ObjectId,
+        required: true
+    },
+    service: {
         type: mongoose.Types.ObjectId,
         required: true
     },
@@ -33,13 +37,9 @@ const Schema = new mongoose.Schema({
     status: {
         type: String,
         enum: ['queue', 'completed', 'refunded'],
-        default: "pending",
+        default: "queue",
         index: true
     },
-    allDoctorsInvolved: {
-        type: Map,
-        required: true
-    }
 }, {timestamps: true})
 
 const PatientMedicalRecord = mongoose.model("PatientsMedicalRecords", Schema); 

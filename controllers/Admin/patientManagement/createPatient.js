@@ -8,7 +8,8 @@ const schema = joi.object({
     lastName: joi.string().required(),
     gender: joi.string().required().valid("Male","Female"),
     phoneNumber: joi.string().pattern(/^\+\d{5}-\d{3}-\d{2}-\d{2}$/).required(),
-    dateOfBirth: joi.date().required()
+    dateOfBirth: joi.date().required(),
+    isStationary: joi.boolean().required()
 })
 
 const createPatient = async (req, res, next) => {

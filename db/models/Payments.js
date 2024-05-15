@@ -1,46 +1,16 @@
 import mongoose from "mongoose";
 
-const refundSchema = new mongoose.Schema({
-    previousAmount: {
-        type: Number,
-        required: true,
-        min: 0,
-    },
-    deductedAmount: {
-        type: Number,
-        required: true,
-        min: 0,
-    },
-    finalAmount: {
-        type: Number,
-        required: true,
-        min: 0
-    },
-    refundedServices: {
-        type: [String],
-        default: []
-    },
-    updatedAt: {
-        type: Date,
-        required: true
-    }
-});
-const paidServiceSchema = new mongoose.Schema({
-    price: {
-        type: Number,
-        required: true
-    },
-    serviceId: {
-        type: mongoose.Types.ObjectId,
-        required: true
-    }
-})
 const PaymentSchema = new mongoose.Schema({
     patientId: {
         type: mongoose.Types.ObjectId,
         required: true
     },
-    initialAmount: {
+    paymentMethod: {
+        type: String,
+        required: true,
+        enum: ['Cash', 'Card', 'Neither']
+    },
+    amountBeforeDeduction: {
         type: Number,
         min: 0,
         required: true,
@@ -50,19 +20,19 @@ const PaymentSchema = new mongoose.Schema({
         min: 0,
         default: 0
     },
-    amountPaid: {
+    amountFinal: {
         type: Number,
         min: 0,
         required: true
     },
-    paidServices:{ 
-        type: [paidServiceSchema],
+    servicePaid:{ 
+        type: mongoose.Types.ObjectId,
         required: true
     }, 
-    refundHistory: {
-        type: [refundSchema],
-        default: []
-    },
+    isRefunded: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 
 
