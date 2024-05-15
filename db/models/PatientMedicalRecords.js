@@ -14,20 +14,6 @@ const serviceSchema = new mongoose.Schema({
     }
 })
 const Schema = new mongoose.Schema({
-    awaitingServices: {
-        type: [serviceSchema],
-        required: true
-    },
-    finishedServices: {
-        type: [String],
-        required: true,
-        default: []
-    },
-    toRefundServices: {
-        type: [String],
-        required: true,
-        default: []
-    },
     paymentSlip: {
         type: mongoose.Types.ObjectId,
         required: true
@@ -46,7 +32,7 @@ const Schema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'completed', 'toRefund'],
+        enum: ['queue', 'completed', 'refunded'],
         default: "pending",
         index: true
     },

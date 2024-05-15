@@ -7,11 +7,11 @@ import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
 import Patient from "../../../db/models/Patient.js";
 import validateData from "../../../utils/validateData.js";
 import mongoose from "mongoose";
-
+const bonusPercentage = Number(process.env.BONUS_PERCENTAGE);
 const joiSchema = joi.object({
-    usedBonus: joi.number().min(0).allow(0).required(),
+    adjustment: joi.number().required(),
     patientId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(), 
-    services: joi.array().min(1).items(joi.string()), // the ID's of the services   
+    serviceId: joi.string().min(20).required(),
 })
 
 const createMedicalRecord = async(req,res, next) => {
@@ -20,9 +20,8 @@ const createMedicalRecord = async(req,res, next) => {
     let isTransFailed = false; 
     try{
         const data = await validateData(joiSchema, req.body); 
-        const serviceIDs = data['services']; 
+        const serviceId = data['serviceId']; 
         const patientId = data['patientId']; 
-        const usedBonus = data['usedBonus']; 
 
         // check if patient exists 
         const patient = await Patient.findById(data['patientId'], 
@@ -34,44 +33,27 @@ const createMedicalRecord = async(req,res, next) => {
             dateOfBirth: 0,
             gender: 0
         });
-        if(typeof patient === 'undefined' || patient === null) throw new NotFound("Patient not found");
+
+        if(typeof patient === 'undefined' || patient === null) throw new NotFound("Patient not found, create the patient");
         //-------------------------- 
 
         // Add patient to the queue in each service
         let netTotal = 0; 
-        const paidServices = [];
-        for(let i = 0; i < serviceIDs.length; i++){
-            const id = serviceIDs[i];
-            const currentTime = new Date(); 
-            const patientObj = {
-                createdAt: currentTime,
-                patientId: patientId,
-                fullName: patient.firstName + ' ' + patient.lastName
-            };
-            const condition = {
-                _id: id,
-                isAvailable: true
-            }
-            const service = Service.findOneAndUpdate(
-                condition, 
-                {$push: {currentQueue: patientObj}}, 
-                {session, new: true, projection: {description: 0}}
-            );
-            if(typeof service === 'undefined' || service === null) throw new NotFound("Service not found");
-            netTotal += service.price; 
-            paidServices.push(); // LEFT OFF HERE!!!
-        }
+        //----------------------
 
         // Create Payment Record
-        if(usedBonus > netTotal) throw new BadRequest("Used bonus cannot exceed the net total");
+        if(bonusToUse > netTotal) throw new BadRequest("Used bonus cannot exceed the net total"); 
+        const amountPaid = netTotal - bonusToUse; 
         const paymentData = {
             patientId,
             initialAmount: netTotal,
-            bonusDeduction: usedBonus,
-            amountPaid: netTotal - usedBonus,
+            bonusDeduction: bonusToUse,
+            amountPaid: amountPaid,
             paidServices: []
         };
-        const paymentRecord = await Payment.create({});
+        const newlyGainedBonus = amountPaid * bonusPercentage + (patient.bonusAvailable - bonusToUse);
+        await Patient.findByIdAndUpdate(patientId,{bonusAvailable: newlyGainedBonus}, {session}); 
+        // const paymentRecord = await Payment.create({});
         //-------------------------- 
 
         await session.commitTransaction();
