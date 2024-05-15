@@ -31,10 +31,21 @@ const PatientSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-    bonusAvailable: {
-        type: Number,
-        min: 0, 
-        default: 0
+    isStationary: {
+        type: Boolean,
+        required: true
+    },
+    isTerminated: {
+        type: Boolean,
+        required: function(){
+            return this.isStationary; 
+        }
+    },
+    package: {
+        type: mongoose.Types.ObjectId,
+        required: function(){
+            return this.isStationary;
+        }
     }
 }, {timestamps: true})
 
