@@ -17,8 +17,8 @@ router.delete('/service/:id', deleteService);
 //
 
 // Doctors
-router.post('/doctors/create', createDoctor); 
-router.delete('/doctors/delete', deleteDoctor); 
+router.post('/doctor', createDoctor); 
+router.delete('/doctor/:id', deleteDoctor); 
 //
 
 export default router;
