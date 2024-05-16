@@ -1,2 +1,4 @@
 ## To-do
-- left off at createMedicalRecord.js 
+- edit createPatient to work with stationary patient
+- choose the date management 
+- 

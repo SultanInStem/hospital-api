@@ -84,8 +84,9 @@ const createMedicalRecord = async(req,res, next) => {
                 patientLastName: patient.lastName,
                 paymentRecord: payment._id,
                 status: 'queue',
-                service: serviceId
-            }, {session}
+                service: serviceId,
+                createdAt: new Date()
+            }, { session }
         );
 
         if(!medRecord) throw new BadRequest("med record hasn't been created");
@@ -97,8 +98,6 @@ const createMedicalRecord = async(req,res, next) => {
         );
         if(!service) throw new BadRequest("Failed to update the service");
         // ----------------------------
-
-
         await session.commitTransaction(); 
         return res.status(StatusCodes.OK).json({success: true});
     }catch(err){
