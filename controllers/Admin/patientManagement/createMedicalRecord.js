@@ -85,7 +85,7 @@ const createMedicalRecord = async(req,res, next) => {
                 paymentRecord: payment._id,
                 status: 'queue',
                 service: serviceId,
-                createdAt: new Date()
+                createdAt: new Date().getTime()
             }, { session }
         );
 
