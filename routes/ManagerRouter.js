@@ -5,6 +5,8 @@ import updateService from "../controllers/Manager/serviceManagement/updateServic
 import deleteService from "../controllers/Manager/serviceManagement/deleteService.js";
 import createDoctor from "../controllers/Manager/doctorManagement/createDoctor.js"; 
 import deleteDoctor from "../controllers/Manager/doctorManagement/deleteDoctor.js"; 
+import createMedPackage from "../controllers/Manager/packageManagement/createPackage.js";
+import deletePackage from "../controllers/Manager/packageManagement/deletePackage.js";
 const router = express.Router(); 
 
 // Create admin account 
@@ -19,6 +21,11 @@ router.delete('/service/:id', deleteService);
 // Doctors
 router.post('/doctor', createDoctor); 
 router.delete('/doctor/:id', deleteDoctor); 
+//
+
+// Med Packages for stationary patients 
+router.post('/package', createMedPackage);
+router.delete('/package/:id', deletePackage); 
 //
 
 export default router;

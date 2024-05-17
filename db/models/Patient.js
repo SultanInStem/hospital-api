@@ -35,13 +35,13 @@ const PatientSchema = new mongoose.Schema({
         type: Boolean,
         required: true
     },
-    isTerminated: {
-        type: Boolean,
+    expiresAt: {
+        type: Number,
         required: function(){
             return this.isStationary; 
         }
-    },
-    package: {
+    }, 
+    packages: {
         type: mongoose.Types.ObjectId,
         required: function(){
             return this.isStationary;
