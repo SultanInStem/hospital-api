@@ -20,6 +20,7 @@
     "http-status-codes": "^2.3.0",
     "joi": "^17.12.1",
     "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",
     "nanoid": "^5.0.5"

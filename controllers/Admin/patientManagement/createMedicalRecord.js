@@ -15,7 +15,7 @@ const joiSchema = joi.object({
     paymentMethod: joi.string().valid('Cash','Card').required(),
     servicePrice: joi.number().min(0).required(),
     patientId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(), 
-    serviceId: joi.string().min(20).required(),
+    serviceId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(),
     bonusDeduction: joi.number().min(0).allow(0).required()
 })
 
@@ -33,6 +33,7 @@ const createMedicalRecord = async(req,res, next) => {
             bonusDeduction,
             servicePrice 
         } = data;
+        console.log(data);
         if(servicePrice - bonusDeduction < 0) throw new BadRequest('Bonus deduction cannot exceed the price of the service');
         // check if patient exists 
         const patient = await Patient.findById(patientId, 
@@ -64,42 +65,51 @@ const createMedicalRecord = async(req,res, next) => {
 
         // create payment record
         const paymentData = {
-            patientId,
+            patientId: patientId,
             amountBeforeDeduction: servicePrice,
-            bonusDeduction,
+            bonusDeduction: bonusDeduction,
             amountFinal: servicePrice - bonusDeduction,
             servicePaid: serviceId,
-            paymentMethod
+            paymentMethod: paymentMethod
         };
-        const payment = new Payment.create(paymentData, {session}); 
+        const payment = new Payment(paymentData); 
         if(!payment) throw new BadRequest('Payment was unsuccessful');
+        await payment.save({ session });
         //----------------------
 
 
         // Create med-record and add it to the queue of the service
-        const medRecord = await PatientMedicalRecord.create(
-            {
-                patientId,
-                patientFirstName: patient.firstName,
-                patientLastName: patient.lastName,
-                paymentRecord: payment._id,
-                status: 'queue',
-                service: serviceId,
-                createdAt: new Date().getTime()
-            }, { session }
-        );
-
+        const medRecordData = {
+            patientId,
+            patientFirstName: patient.firstName,
+            patientLastName: patient.lastName,
+            paymentRecord: payment['_id'],
+            status: 'queue',
+            service: serviceId,
+            createdAt: new Date().getTime()
+        }
+        const medRecord = new PatientMedicalRecord(medRecordData);
+        await medRecord.save({session}); 
         if(!medRecord) throw new BadRequest("med record hasn't been created");
-        const service = await Service.findByIdAndUpdate(serviceId,
+        const service = await Service.findOneAndUpdate({_id: serviceId},
             {
-                $push: {currentQueue: medRecord._id}
+                $push: {currentQueue: medRecord['_id']}
             }, 
-            {session}
+            {
+                session, 
+                new: true,
+                projection: {
+                    createdAt: 0,
+                    updatedAt: 0,
+                    title: 0,
+                    description: 0
+                }
+            }
         );
         if(!service) throw new BadRequest("Failed to update the service");
         // ----------------------------
         await session.commitTransaction(); 
-        return res.status(StatusCodes.OK).json({success: true});
+        return res.status(StatusCodes.OK).json({success: true, medicalRecord: medRecord, payment});
     }catch(err){
         isTransactionFailed = true;
         return next(err); 
