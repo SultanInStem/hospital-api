@@ -3,6 +3,7 @@ import Patient from '../../../db/models/Patient.js';
 import joi from 'joi'; 
 import getPatientId from '../../../utils/getPatientId.js';
 import validateData from "../../../utils/validateData.js"; 
+
 const schema = joi.object({
     firstName: joi.string().required(),
     lastName: joi.string().required(),
@@ -12,13 +13,13 @@ const schema = joi.object({
     isStationary: joi.boolean().required(),
     packages: joi.when('isStationary', {
         is: true,
-        then: joi.array().items(joi.string()).required(),
-        otherwise: joi.array().optional()
+        then: joi.array().items(joi.string()).min(1).required(),
+        otherwise: joi.array().forbidden(),
     }),
     expiresAt: joi.when('isStationary', {
         is: true,
         then: joi.number().positive().required(),
-        otherwise: joi.number().optional()
+        otherwise: joi.number().forbidden()
     })
 })
 

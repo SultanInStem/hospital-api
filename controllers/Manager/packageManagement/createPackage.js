@@ -4,7 +4,7 @@ import joi from "joi";
 import validateData from "../../../utils/validateData.js";
 const joiSchema = joi.object({
     price: joi.number().positive().required(),
-    servicesAllowed: joi.array().items(joi.string().min(20)).required()
+    servicesAllowed: joi.array().items(joi.string().min(20)).min(1).required()
 })
 
 const createMedPackage = async (req, res, next) => {
