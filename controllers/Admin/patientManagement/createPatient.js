@@ -9,7 +9,17 @@ const schema = joi.object({
     gender: joi.string().required().valid("Male","Female"),
     phoneNumber: joi.string().pattern(/^\+\d{5}-\d{3}-\d{2}-\d{2}$/).required(),
     dateOfBirth: joi.date().required(),
-    isStationary: joi.boolean().required()
+    isStationary: joi.boolean().required(),
+    packages: joi.when('isStationary', {
+        is: true,
+        then: joi.array().items(joi.string()).required(),
+        otherwise: joi.array().optional()
+    }),
+    expiresAt: joi.when('isStationary', {
+        is: true,
+        then: joi.number().positive().required(),
+        otherwise: joi.number().optional()
+    })
 })
 
 const createPatient = async (req, res, next) => {
@@ -22,7 +32,7 @@ const createPatient = async (req, res, next) => {
         };
         const patientID = getPatientId(seed);
         data['uniqueId'] = patientID;
-        const patient = await Patient.create(data);
+        const patient = await Patient.create(data); 
         return res.status(StatusCodes.CREATED).json({success: true, patient})
     }catch(err){
         return next(err); 
