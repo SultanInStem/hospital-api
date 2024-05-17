@@ -1,18 +1,4 @@
 import mongoose from "mongoose";
-const serviceSchema = new mongoose.Schema({
-    _id: {
-        type: mongoose.Types.ObjectId, 
-        required: true
-    },
-    title: {
-        type: String,
-        required: true
-    },
-    providedBy: {
-        type: mongoose.Types.ObjectId,
-        required: true
-    }
-})
 const Schema = new mongoose.Schema({
     paymentRecord: {
         type: mongoose.Types.ObjectId,
@@ -40,6 +26,10 @@ const Schema = new mongoose.Schema({
         default: "queue",
         index: true
     },
+    createdAt: {
+        type: Number,
+        reuqired: true
+    }
 }, {timestamps: true})
 
 const PatientMedicalRecord = mongoose.model("PatientsMedicalRecords", Schema); 
