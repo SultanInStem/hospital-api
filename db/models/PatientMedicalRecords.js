@@ -23,7 +23,7 @@ const Schema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['queue', 'completed', 'refunded'],
+        enum: ['queue', 'completed', 'refunded', 'toRefund'],
         default: "queue",
         index: true
     },
