@@ -32,8 +32,11 @@ const createPatient = async (req, res, next) => {
             phoneNumber: data['phoneNumber']
         };
         const patientID = getPatientId(seed);
-        data['uniqueId'] = patientID;
-        const patient = await Patient.create(data); 
+        data['uniqueId'] = patientID;            
+        const patient = await Patient.create(data);
+        if(patient['isStationary']){
+            
+        } 
         return res.status(StatusCodes.CREATED).json({success: true, patient})
     }catch(err){
         return next(err); 
