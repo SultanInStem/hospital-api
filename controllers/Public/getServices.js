@@ -19,6 +19,11 @@ const getServices = async(req, res, next) => {
         }else{
             services = await Service.find(newQuery, {createdAt: 0, updatedAt: 0, description: 0}).limit(query['size']);
         }
+        services = services.map(item => {
+            const temp = item.toObject();
+            temp['currentQueue'] = item['currentQueue'].length;
+            return temp; 
+        })
         return res.status(StatusCodes.OK).json({success: true,services})
     }catch(err){
         return next(err); 
