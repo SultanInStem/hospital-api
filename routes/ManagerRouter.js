@@ -7,10 +7,18 @@ import createDoctor from "../controllers/Manager/doctorManagement/createDoctor.j
 import deleteDoctor from "../controllers/Manager/doctorManagement/deleteDoctor.js"; 
 import createMedPackage from "../controllers/Manager/packageManagement/createPackage.js";
 import deletePackage from "../controllers/Manager/packageManagement/deletePackage.js";
+import deleteAdmin from "../controllers/Manager/adminManagement/deleteAdmin.js";
+import getAllAdmins from "../controllers/Manager/adminManagement/getAllAdmins.js";
+import searchAdmin from "../controllers/Manager/adminManagement/searchAdmin.js";
 const router = express.Router(); 
 
 // Create admin account 
-router.post('/create-admin', createAdmin); 
+router.post('/admins', createAdmin); 
+router.delete('/admins/:id', deleteAdmin); 
+router.get('/admins', getAllAdmins);
+router.get('/admins/search', searchAdmin); 
+// 
+
 
 // Services 
 router.post('/service', createService);
