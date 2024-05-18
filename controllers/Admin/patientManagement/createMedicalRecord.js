@@ -85,12 +85,12 @@ const createMedicalRecord = async(req,res, next) => {
             patientLastName: patient.lastName,
             paymentRecord: payment['_id'],
             status: 'queue',
-            service: serviceId,
+            serviceId: serviceId,
             createdAt: new Date().getTime()
         }
         const medRecord = new PatientMedicalRecord(medRecordData);
         await medRecord.save({session}); 
-        if(!medRecord) throw new BadRequest("med record hasn't been created");
+        if(!medRecord) throw new BadRequest("Medical record hasn't been created");
         const service = await Service.findOneAndUpdate({_id: serviceId},
             {
                 $push: {currentQueue: medRecord['_id']}

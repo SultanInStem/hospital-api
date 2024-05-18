@@ -19,8 +19,7 @@ const PatientSchema = new mongoose.Schema({
         match: /^\+\d{5}-\d{3}-\d{2}-\d{2}$/,
     },
     dateOfBirth: {
-        type: Date,
-        required: true
+        type: Date
     },
     uniqueId: {
         type: String,

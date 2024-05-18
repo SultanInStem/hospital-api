@@ -5,7 +5,7 @@ const Schema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         required: true
     },
-    service: {
+    serviceId: {
         type: mongoose.Types.ObjectId,
         required: true
     },
