@@ -25,9 +25,15 @@ const PaymentSchema = new mongoose.Schema({
         min: 0,
         required: true
     },
+    packagesPaid: {
+        type: [mongoose.Types.ObjectId], 
+        required: false, 
+    },
     servicePaid:{ 
         type: mongoose.Types.ObjectId,
-        required: true
+        required: function(){
+            return this.packagesPaid.length > 0;
+        }
     }, 
     isRefunded: {
         type: Boolean,

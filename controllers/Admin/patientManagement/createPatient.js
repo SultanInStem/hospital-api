@@ -7,19 +7,13 @@ import validateData from "../../../utils/validateData.js";
 const schema = joi.object({
     firstName: joi.string().required(),
     lastName: joi.string().required(),
-    gender: joi.string().required().valid("Male","Female"),
     phoneNumber: joi.string().pattern(/^\+\d{5}-\d{3}-\d{2}-\d{2}$/).required(),
     dateOfBirth: joi.date().optional(),
     isStationary: joi.boolean().required(),
-    packages: joi.when('isStationary', {
+    gender: joi.when('isStationary', {
         is: true,
-        then: joi.array().items(joi.string()).min(1).required(),
-        otherwise: joi.array().forbidden(),
-    }),
-    expiresAt: joi.when('isStationary', {
-        is: true,
-        then: joi.number().positive().required(),
-        otherwise: joi.number().forbidden()
+        then:  joi.string().required().valid("Male","Female"),
+        otherwise: joi.string().optional()
     })
 })
 
@@ -32,11 +26,8 @@ const createPatient = async (req, res, next) => {
             phoneNumber: data['phoneNumber']
         };
         const patientID = getPatientId(seed);
-        data['uniqueId'] = patientID;            
+        data['uniqueId'] = patientID;
         const patient = await Patient.create(data);
-        if(patient['isStationary']){
-            
-        } 
         return res.status(StatusCodes.CREATED).json({success: true, patient})
     }catch(err){
         return next(err); 
