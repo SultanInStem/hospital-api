@@ -18,3 +18,10 @@ export class Unauthorized extends CustomError{
         this.statusCode = StatusCodes.UNAUTHORIZED; 
     }
 }
+
+export class ServerError extends CustomError{
+    constructor(message){
+        super(message); 
+        this.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+    }
+}

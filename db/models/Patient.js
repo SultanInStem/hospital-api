@@ -10,7 +10,6 @@ const PatientSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        required: true,
         enum: ['Male', 'Female']
     },
     phoneNumber: {
@@ -38,13 +37,15 @@ const PatientSchema = new mongoose.Schema({
         type: Number,
         required: function(){
             return this.isStationary; 
-        }
+        },
+        default: 0
     }, 
     packages: {
         type: mongoose.Types.ObjectId,
         required: function(){
             return this.isStationary;
-        }
+        },
+        default: []
     }
 }, {timestamps: true})
 
