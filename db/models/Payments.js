@@ -34,6 +34,9 @@ const PaymentSchema = new mongoose.Schema({
     isRefunded: {
         type: Boolean,
         default: false
+    },
+    bonusCardId: {
+        type: mongoose.Types.ObjectId
     }
 }, { timestamps: true });
 
