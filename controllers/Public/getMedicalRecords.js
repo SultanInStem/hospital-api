@@ -7,7 +7,7 @@ const joiSchema = joi.object({
     size: joi.string().regex(/^\d+$/),
     sortOrder: joi.string().valid('1','-1').regex(/^\d+$/),
     sortBy: joi.string().valid('date','price'),
-    status: joi.string().valid('completed', 'uncompleted', 'pending'),
+    status: joi.string().valid('completed', 'toRefund', 'refunded', 'queue'),
     skip: joi.string().regex(/^\d+$/)
 })
 const getMedicalRecords = async(req, res, next) => {
