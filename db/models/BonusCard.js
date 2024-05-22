@@ -17,7 +17,8 @@ const BonusCardSchema = new mongoose.Schema({
     },
     cardId: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     }
 }); 
 
