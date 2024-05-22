@@ -9,7 +9,6 @@ const schema = joi.object({
     lastName: joi.string().required(),
     phoneNumber: joi.string().pattern(/^\+\d{5}-\d{3}-\d{2}-\d{2}$/).required(),
     dateOfBirth: joi.date().optional(),
-    isStationary: joi.boolean().required(),
     gender: joi.string().valid('Male','Female').optional()
 })
 
