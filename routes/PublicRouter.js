@@ -5,6 +5,7 @@ import getMedicalRecords from "../controllers/Public/getMedicalRecords.js";
 import getServices from "../controllers/Public/getServices.js";
 import getDoctors from "../controllers/Public/getDoctors.js"; 
 import getMedPackages from "../controllers/Public/getMedPackages.js";
+import getPaymnets from "../controllers/Public/getPayments.js";
 const router = express.Router(); 
 // Patients 
 router.get('/patients', getAllPatients);
@@ -23,6 +24,13 @@ router.get("/medicalrecords", getMedicalRecords); // ":id" is of the patient
 router.get('/doctors', getDoctors); 
 //
 
-
+// Med-Packages 
 router.get('/packages', getMedPackages);
+// 
+
+// Payments 
+router.get('/payments', getPaymnets); 
+// 
+
+
 export default router; 
