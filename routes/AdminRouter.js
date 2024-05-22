@@ -20,8 +20,8 @@ router.patch("/patients/static/activate", activateStationaryPatient);
 router.post("/medicalrecords/create", createMedicalRecord);
 
 // Finance 
-router.post("/finance/refund", makeRefund); 
-router.get("/finance/payment-records", getPayments); 
+router.patch("/finance/refund/:id", makeRefund); 
+// router.get("/finance/payment-records", getPayments); 
 // -------
 
 export default router;

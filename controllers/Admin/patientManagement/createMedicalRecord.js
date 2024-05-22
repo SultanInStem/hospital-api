@@ -70,7 +70,8 @@ const createMedicalRecord = async(req,res, next) => {
             bonusDeduction: bonusDeduction,
             amountFinal: servicePrice - bonusDeduction,
             servicePaid: serviceId,
-            paymentMethod: paymentMethod
+            paymentMethod: paymentMethod,
+            bonusCardId: cardId ? cardId : null
         };
         const payment = new Payment(paymentData); 
         if(!payment) throw new BadRequest('Payment was unsuccessful');
