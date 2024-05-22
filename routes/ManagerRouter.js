@@ -12,7 +12,8 @@ import getAllAdmins from "../controllers/Manager/adminManagement/getAllAdmins.js
 import searchAdmin from "../controllers/Manager/adminManagement/searchAdmin.js";
 import updatePackage from "../controllers/Manager/packageManagement/updatePackage.js";
 import addPkgService from '../controllers/Manager/packageManagement/addPkgService.js';
-import removePkgService from "../controllers/Manager/packageManagement/removePkgService.js"; 
+import removePkgService from "../controllers/Manager/packageManagement/removePkgService.js";
+import updateDoctor from "../controllers/Manager/doctorManagement/updateDoctor.js"; 
 const router = express.Router(); 
 
 // Create admin account 
@@ -32,6 +33,7 @@ router.delete('/service/:id', deleteService);
 // Doctors
 router.post('/doctor', createDoctor); 
 router.delete('/doctor/:id', deleteDoctor); 
+router.patch('/doctor', updateDoctor);
 //
 
 // Med Packages for stationary patients 
