@@ -10,6 +10,9 @@ import deletePackage from "../controllers/Manager/packageManagement/deletePackag
 import deleteAdmin from "../controllers/Manager/adminManagement/deleteAdmin.js";
 import getAllAdmins from "../controllers/Manager/adminManagement/getAllAdmins.js";
 import searchAdmin from "../controllers/Manager/adminManagement/searchAdmin.js";
+import updatePackage from "../controllers/Manager/packageManagement/updatePackage.js";
+import addPkgService from '../controllers/Manager/packageManagement/addPkgService.js';
+import removePkgService from "../controllers/Manager/packageManagement/removePkgService.js"; 
 const router = express.Router(); 
 
 // Create admin account 
@@ -34,6 +37,9 @@ router.delete('/doctor/:id', deleteDoctor);
 // Med Packages for stationary patients 
 router.post('/package', createMedPackage);
 router.delete('/package/:id', deletePackage); 
+router.patch('/package', updatePackage);
+router.patch('/package/service/add', addPkgService);
+router.patch('/package/service/delete', removePkgService); 
 //
 
 export default router;
