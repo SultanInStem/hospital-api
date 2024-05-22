@@ -29,7 +29,7 @@ const completeRecord = async(req, res, next) => {
         return res.status(StatusCodes.OK).json({
             success: true, 
             msg: 'Procedure has been finished', 
-            medicalRecord: updatedRecord
+            medicalRecord: updatedService
         })
     }catch(err){
         return next(err); 
