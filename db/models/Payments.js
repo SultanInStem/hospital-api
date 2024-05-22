@@ -37,6 +37,10 @@ const PaymentSchema = new mongoose.Schema({
     },
     bonusCardId: {
         type: mongoose.Types.ObjectId
+    },
+    createdAt: {
+        type: Number,
+        required: true
     }
 }, { timestamps: true });
 

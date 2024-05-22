@@ -71,7 +71,8 @@ const createMedicalRecord = async(req,res, next) => {
             amountFinal: servicePrice - bonusDeduction,
             servicePaid: serviceId,
             paymentMethod: paymentMethod,
-            bonusCardId: cardId ? cardId : null
+            bonusCardId: cardId ? cardId : null,
+            createdAt: new Date().getTime()
         };
         const payment = new Payment(paymentData); 
         if(!payment) throw new BadRequest('Payment was unsuccessful');
