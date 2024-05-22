@@ -6,12 +6,14 @@ import deletePatient from "../controllers/Admin/patientManagement/deletePatient.
 import createMedicalRecord from "../controllers/Admin/patientManagement/createMedicalRecord.js";
 import makeRefund from "../controllers/Admin/finanaceManagment/makeRefund.js";
 import getPayments from "../controllers/Admin/finanaceManagment/getPayments.js";
+import activateStationaryPatient from "../controllers/Admin/patientManagement/activateStaticPatient.js";
 
 
 // Patients 
 router.post("/patients/create", createPatient); 
 router.delete("/patients/:id", deletePatient);
 router.patch("/patients/:id", updatePatient);
+router.patch("/patients/static/activate", activateStationaryPatient); 
 //------------
 
 // Medical records 

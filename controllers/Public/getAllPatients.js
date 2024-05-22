@@ -5,7 +5,6 @@ const getAllPatients = async(req, res, next) => {
     try{
         const projection = {
             phoneNumber: 0, 
-            isStationary: 0, 
             uniqueId: 0, 
             dateOfBirth: 0, 
             notes: 0,
