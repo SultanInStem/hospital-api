@@ -41,7 +41,7 @@ const PatientSchema = new mongoose.Schema({
         default: 0
     }, 
     packages: {
-        type: mongoose.Types.ObjectId,
+        type: [mongoose.Types.ObjectId],
         required: function(){
             return this.isStationary;
         },

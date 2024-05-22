@@ -12,14 +12,14 @@ const bonusPercentage = Number(process.env.BONUS_PERCENTAGE);
 
 const joiSchema = joi.object({
     packages: joi.array().items(joi.string().min(22)).min(1).required(),
-    expiresAt: joi.date().required(), // unix time
+    expiresAt: joi.number().positive().required(), // unix time
     patientId: joi.string().min(22).required(),
     cardId: joi.string().optional(),
     bonusDeduction: joi.number().positive().allow(0).required(),
-    paymentMethod: joi.string().validate('Cash', 'Card', 'Neither').required()
+    paymentMethod: joi.string().valid('Cash', 'Card').required()
 })
 
-const activateStationaryPatient = async (req,res, next) => {
+const activateStaticPatient = async (req,res, next) => {
     if(isNaN(bonusPercentage)) throw new ServerError("BONUS_PERCENTAGE is not specified in the .env"); 
     const session = await mongoose.startSession();
     session.startTransaction(); 
@@ -72,7 +72,7 @@ const activateStationaryPatient = async (req,res, next) => {
             amountFinal: netPrice - bonusDeduction,
             packagesPaid: packages
         }; 
-        const payment = await Payment.create(paymentData, {session, new: true}); // create payment record  
+        const payment = await Payment.create([paymentData], {session, new: true}); // create payment record  
         if(!payment) throw new BadRequest("Payment was unsuccessful"); 
 
         await session.commitTransaction(); 
@@ -87,4 +87,4 @@ const activateStationaryPatient = async (req,res, next) => {
     }
 }
 
-export default activateStationaryPatient;
+export default activateStaticPatient;
