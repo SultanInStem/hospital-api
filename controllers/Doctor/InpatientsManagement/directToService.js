@@ -30,6 +30,15 @@ const directToService = async(req, res, next) => {
         }else if(patient.PCP !== docId){ // check if the doctor is indeed PCP
             throw new BadRequest(`Only doctor with ID ${patient.PCP} is allowed to manage this patient`);  
         }
+        
+        // check if service even exists 
+        const service = await Service.findById(
+            serviceId, 
+            {createdAt: 0, updatedAt: 0, currentQueue: 0, providedBy: 0, price: 0}
+        ); 
+        if(!service) throw new BadRequest(`Service with ID ${serviceId} not found`); 
+        //---
+
 
         // check if the serviceId is allowed by the packages 
         const patientPackages = patient.packages; 
@@ -42,11 +51,8 @@ const directToService = async(req, res, next) => {
                 break; 
             }
         }
-        const service = await Service.findById(
-            serviceId, 
-            {createdAt: 0, updatedAt: 0, currentQueue: 0, providedBy: 0, price: 0}
-        ); 
-        if(!service) throw new BadRequest(`Service with ID ${serviceId} not found`); 
+        if(!isAllowed) throw new BadRequest("Patient is not allowed to use this service since it is not specified in packages!");
+        //---
 
         // create medical record 
         const medRecord = await PatientMedicalRecord.create({
@@ -60,13 +66,15 @@ const directToService = async(req, res, next) => {
             createdAt: currentTime
         });
         if(!medRecord) throw new BadRequest("Med record hasn't been created. Consult Tech Support.");
+        //---
 
         // add medRecord to the currentQueue 
         const updatedService = await Service.findByIdAndUpdate(
             serviceId, 
             { $push: { currentQueue: medRecord._id } }, 
-            {projection: {createdAt: 0, providedBy: 0, title: 0, price: 0}}
+            { projection: {createdAt: 0, providedBy: 0, title: 0, price: 0 }}
         );
+        //---
 
 
         const response = { 
