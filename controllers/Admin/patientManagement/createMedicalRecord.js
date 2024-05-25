@@ -83,6 +83,7 @@ const createMedicalRecord = async(req,res, next) => {
 
         // Create med-record and add it to the queue of the service
         const medRecordData = {
+            isInpatient: false,
             patientId,
             patientFirstName: patient.firstName,
             patientLastName: patient.lastName,

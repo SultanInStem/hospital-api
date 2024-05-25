@@ -1,9 +1,15 @@
 import mongoose from "mongoose";
 
 const Schema = new mongoose.Schema({
+    isInpatient: {
+        type: Boolean, 
+        required: true
+    },
     paymentRecord: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: function(){
+            return !this.isInpatient;
+        }
     },
     serviceId: {
         type: mongoose.Types.ObjectId,
@@ -33,7 +39,7 @@ const Schema = new mongoose.Schema({
     },
     createdAt: {
         type: Number,
-        reuqired: true
+        required: true
     }
 }, {timestamps: true})
 

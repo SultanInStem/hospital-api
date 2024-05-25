@@ -19,6 +19,7 @@ router.patch("/patients/static/activate", activateStationaryPatient);
 
 // Medical records 
 router.post("/medicalrecords/create", createMedicalRecord);
+// 
 
 // Finance 
 router.patch("/finance/refund/:id", makeRefund); 
