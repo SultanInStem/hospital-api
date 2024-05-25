@@ -12,7 +12,7 @@ const deletePatient = async(req, res, next) => {
                 $or:  [ {status: 'queue'}, {status: 'toRefund'} ]
             }
         );
-        if(pendingRecords.length > 0) throw new BadRequest("Patient cannot be delete since they have pending records");
+        if(pendingRecords.length > 0) throw new BadRequest("Patient cannot be deleted since they have pending records");
         const removedPatient = await Patient.findOneAndDelete({ _id: id });
         if(!removedPatient) throw new NotFound("Patient not found");
         return res.status(StatusCodes.OK).json({success: true, msg: "Patient has been deleted", removedPatient})
