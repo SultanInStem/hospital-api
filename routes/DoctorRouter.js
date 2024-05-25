@@ -5,7 +5,7 @@ import deleteNote from "../controllers/Doctor/PatientsNotes/deleteNote.js";
 import getPatientsQueue from "../controllers/Doctor/queueFunctionality/getPatientsQueue.js";
 import completeRecord from "../controllers/Doctor/medicalRecords/completeRecord.js";
 import redirectForRefund from "../controllers/Doctor/medicalRecords/redirectForRefund.js";
-import directToService from "../controllers/Doctor/staticPatientsManagement/directToService.js";
+import directToService from "../controllers/Doctor/InpatientsManagement/directToService.js";
 
 
 // NOTES 
@@ -15,11 +15,12 @@ router.delete('/note/:id', deleteNote);
 
 // Patients 
 router.get("/patients/queue", getPatientsQueue); 
-router.patch("/patients/static/directToService", directToService); 
 //
+
 
 // Med Records 
 router.patch("/medicalrecords/complete/:id", completeRecord); 
 router.patch("/medicalrecords/refund/:id", redirectForRefund);
+router.post("/medicalrecords/create", directToService);
 //
 export default router; 

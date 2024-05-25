@@ -2,6 +2,7 @@ import User from "../../../db/models/User.js";
 import { StatusCodes } from "http-status-codes";
 import { NotFound } from "../../../customErrors/Errors.js";
 import Service from "../../../db/models/Service.js"; 
+import Patient from "../../../db/models/Patient.js";
 import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
 const deleteDoctor = async (req, res, next) => {
     try{
@@ -24,7 +25,8 @@ const deleteDoctor = async (req, res, next) => {
                 }
             }
         }
-        
+        // if the doctor was PCP for some patients, delete doc ID from those patients 
+        await Patient.updateMany({PCP: id}, {$set: { PCP: null }}); 
         const response = {
             success: true, 
             msg: "Doctor has been deleted successfuly",

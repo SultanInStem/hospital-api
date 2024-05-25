@@ -36,6 +36,9 @@ const PatientSchema = new mongoose.Schema({
     packages: {
         type: [mongoose.Types.ObjectId],
         default: []
+    }, 
+    PCP: { // primary care physician 
+        type: mongoose.Types.ObjectId
     }
 }, {timestamps: true})
 
