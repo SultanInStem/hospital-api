@@ -13,7 +13,7 @@ import activateInpatient from "../controllers/Admin/patientManagement/activateIn
 // Patients 
 router.post("/patients/create", createPatient); 
 router.delete("/patients/:id", deletePatient);
-router.patch("/patients/:id", updatePatient);
+router.patch("/patients", updatePatient);
 router.patch("/patients/activate/inpatient", activateInpatient); 
 //------------
 

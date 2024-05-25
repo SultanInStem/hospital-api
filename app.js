@@ -56,7 +56,7 @@ app.use("/api/v1/manager", AuthManager, ManagerRouter);
 app.use("/api/v1/admin", AuthAdmin, AdminRouter);
 app.use("/api/v1/doctor", Auth, DoctorRouter); 
 app.use("/api/v1/auth", AuthRouter); 
-app.use('/api/v1/public', Auth, PublicRouter);
+app.use("/api/v1/public", Auth, PublicRouter);
 
 
 app.use(ErrorHandler); 
