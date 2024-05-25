@@ -51,7 +51,7 @@ const activateStaticPatient = async (req,res, next) => {
             const adjustment = -bonusDeduction + (netPrice - bonusDeduction) * bonusPercentage;
             const bonusCard = await BonusCard.findByIdAndUpdate(cardId, 
                 { $inc: { balance: adjustment } }, 
-                {new: false, session }
+                { new: false, session }
             );
             if(!bonusCard) throw new NotFound(`Bonus card with ID ${cardId} not found`);
             else if(bonusDeduction > bonusCard.balance) throw new BadRequest("Bonus card does not possess sufficient funds");
@@ -59,7 +59,7 @@ const activateStaticPatient = async (req,res, next) => {
         
         const patient = await Patient.findByIdAndUpdate(patientId,  // update the patient 
         { $set: { packages: packages, expiresAt: expiresAt} },
-        {new: true, session}
+        { new: true, session }
         );
         if(!patient.isStationary) throw new BadRequest(`Patient with ID ${patientId} is not stationary`); 
         else if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`);

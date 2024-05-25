@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { BadRequest, NotFound } from "../../../customErrors/Errors.js";
+import { BadRequest, NotFound, ServerError } from "../../../customErrors/Errors.js";
 import Payment from "../../../db/models/Payments.js";
 import joi from "joi"; 
 import Service from "../../../db/models/Service.js";
@@ -20,6 +20,7 @@ const joiSchema = joi.object({
 })
 
 const createMedicalRecord = async(req,res, next) => {
+    if(isNaN(bonusPercentage)) throw new ServerError('BONUS_PERCENTAGE is not a number');
     const session = await mongoose.startSession(); 
     session.startTransaction(); 
     let isTransactionFailed = false;
