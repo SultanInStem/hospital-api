@@ -13,13 +13,13 @@ const joiSchema = joi.object({
     lte: joi.string().regex(/^\d*\.?\d+/).optional(),
     skip: joi.string().regex(/^\d+$/).optional(),
     startDate: joi.string().optional(),
-    endDate: joi.string().optional()
+    endDate: joi.string().optional(), 
+    paymentMethod: joi.string().valid('Cash', 'Card').optional()
 }); 
 
 const getPaymnets = async(req, res, next) => {
     try{
         const data = await validateData(joiSchema,req.query);
-        let payments = []
         const currentTime = new Date().getTime(); 
         const TIME_INTERVAL = 1000 * 60 * 60 * 24 * 30 * 6; // six months in miliseconds 
         if(data['paymentId']){
@@ -52,9 +52,38 @@ const getPaymnets = async(req, res, next) => {
             data['endDate'] = currentTime; 
         }
 
+        let gte = 0; 
+        let lte = Infinity; 
+        if(data['gte'] >= 0){
+            gte = data['gte']; 
+        }if(data['lte'] >= 0){
+            lte = data['lte']
+        }if(data['lte'] <= data['gte']){
+            lte = Infinity;
+        }
+        const filter = {
+            paymentMethod: data['paymentMethod'],
+            patientId: data['patientId']
+        };
+        const paymentRecords = await Payment.find(
+            {
+                createdAt: { 
+                    $gte: data['startDate'],
+                    $lte: data['endDate']
+                },
+                amountFinal: {
+                    $gte: gte,
+                    $lte: lte
+                }, 
+                ...filter
+            }
+        ).limit(size).skip(skip);
 
-
-        return res.status(StatusCodes.OK).json({ success: true, payments }); 
+        const response = {
+            success: true, 
+            paymentRecords
+        }; 
+        return res.status(StatusCodes.OK).json(response); 
     }catch(err){
         return next(err);
     }

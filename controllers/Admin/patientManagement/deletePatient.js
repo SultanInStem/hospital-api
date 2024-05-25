@@ -2,8 +2,6 @@ import { StatusCodes } from "http-status-codes";
 import { BadRequest, NotFound } from "../../../customErrors/Errors.js";
 import Patient from "../../../db/models/Patient.js";
 import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
-import Service from "../../../db/models/Service.js"; 
-
 const deletePatient = async(req, res, next) => {
     try{
         const { id } = req.params;

@@ -7,7 +7,6 @@ import createMedicalRecord from "../controllers/Admin/patientManagement/createMe
 import makeRefund from "../controllers/Admin/finanaceManagment/makeRefund.js";
 import createCard from "../controllers/Admin/bonusCard/createCard.js";
 import deleteCard from "../controllers/Admin/bonusCard/deleteCard.js";
-import getPayments from "../controllers/Admin/finanaceManagment/getPayments.js";
 import activateStationaryPatient from "../controllers/Admin/patientManagement/activateStaticPatient.js";
 
 
@@ -23,7 +22,6 @@ router.post("/medicalrecords/create", createMedicalRecord);
 
 // Finance 
 router.patch("/finance/refund/:id", makeRefund); 
-// router.get("/finance/payment-records", getPayments); 
 // ------- 
 
 router.post('/bonuscard', createCard);
