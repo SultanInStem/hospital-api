@@ -7,14 +7,14 @@ import createMedicalRecord from "../controllers/Admin/patientManagement/createMe
 import makeRefund from "../controllers/Admin/finanaceManagment/makeRefund.js";
 import createCard from "../controllers/Admin/bonusCard/createCard.js";
 import deleteCard from "../controllers/Admin/bonusCard/deleteCard.js";
-import activateStationaryPatient from "../controllers/Admin/patientManagement/activateStaticPatient.js";
+import activateInpatient from "../controllers/Admin/patientManagement/activateInpatient.js";
 
 
 // Patients 
 router.post("/patients/create", createPatient); 
 router.delete("/patients/:id", deletePatient);
 router.patch("/patients/:id", updatePatient);
-router.patch("/patients/static/activate", activateStationaryPatient); 
+router.patch("/patients/activate/inpatient", activateInpatient); 
 //------------
 
 // Medical records 
