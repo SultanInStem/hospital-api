@@ -63,8 +63,10 @@ const getPaymnets = async(req, res, next) => {
         }
         const filter = {
             paymentMethod: data['paymentMethod'],
-            patientId: data['patientId']
+            patientId: data['patientId'],
         };
+        if(!filter['paymentMethod']) delete filter['paymentMethod']; 
+        if(!filter['patientId']) delete filter['patientId']; 
         const paymentRecords = await Payment.find(
             {
                 createdAt: { 
@@ -74,7 +76,7 @@ const getPaymnets = async(req, res, next) => {
                 amountFinal: {
                     $gte: gte,
                     $lte: lte
-                }, 
+                },
                 ...filter
             }
         ).limit(size).skip(skip);
