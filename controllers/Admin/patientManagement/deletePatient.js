@@ -1,12 +1,22 @@
 import { StatusCodes } from "http-status-codes";
-import { NotFound } from "../../../customErrors/Errors.js";
+import { BadRequest, NotFound } from "../../../customErrors/Errors.js";
 import Patient from "../../../db/models/Patient.js";
+import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
+import Service from "../../../db/models/Service.js"; 
 
 const deletePatient = async(req, res, next) => {
     try{
         const { id } = req.params;
-        const removedPatient = await Patient.findOneAndDelete({_id: id})
-        if(!removedPatient) throw new NotFound("Patient not found")
+        // find pending medical records of that patient 
+        const pendingRecords = await PatientMedicalRecord.find(
+            {
+                patientId: id, 
+                $or:  [ {status: 'queue'}, {status: 'toRefund'} ]
+            }
+        );
+        if(pendingRecords.length > 0) throw new BadRequest("Patient cannot be delete since they have pending records");
+        const removedPatient = await Patient.findOneAndDelete({ _id: id });
+        if(!removedPatient) throw new NotFound("Patient not found");
         return res.status(StatusCodes.OK).json({success: true, msg: "Patient has been deleted", removedPatient})
     }catch(err){
         return next(err); 

@@ -9,6 +9,10 @@ const Schema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         required: true
     },
+    serviceTitle: {
+        type: String, 
+        required: true
+    }, 
     patientId: {
         type: mongoose.Types.ObjectId,
         required: true
