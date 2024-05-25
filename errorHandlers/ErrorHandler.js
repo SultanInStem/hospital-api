@@ -14,7 +14,7 @@ const ErrorHandler = (err, req, res, next) => {
     }else if(err instanceof jwt.JsonWebTokenError){
         return res.status(StatusCodes.BAD_REQUEST).json({success: false, msg: "Invalid token signature"})
     }
-    console.log(err);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({success: false, msg: "Something went wrong"})
+    console.log(err); 
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({success: false, msg: "Something went wrong", err})
 }
 export default ErrorHandler;

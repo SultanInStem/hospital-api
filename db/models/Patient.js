@@ -29,22 +29,12 @@ const PatientSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-    isStationary: {
-        type: Boolean,
-        required: true
-    },
     expiresAt: {
         type: Number,
-        required: function(){
-            return this.isStationary; 
-        },
         default: 0
     }, 
     packages: {
         type: [mongoose.Types.ObjectId],
-        required: function(){
-            return this.isStationary;
-        },
         default: []
     }
 }, {timestamps: true})
