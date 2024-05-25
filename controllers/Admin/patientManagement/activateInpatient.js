@@ -9,17 +9,17 @@ import BonusCard from "../../../db/models/BonusCard.js";
 import mongoose from "mongoose";
 import unixTimeToDays from "../../../utils/unixTimeToDays.js";
 const bonusPercentage = Number(process.env.BONUS_PERCENTAGE); 
-
+const MIN_ID_LENGTH = Number(process.env.MONGO_MIN_ID_LENGTH); 
 const joiSchema = joi.object({
-    packages: joi.array().items(joi.string().min(22)).min(1).required(),
+    packages: joi.array().items(joi.string().min(MIN_ID_LENGTH)).min(1).required(),
     expiresAt: joi.number().positive().required(), // unix time
-    patientId: joi.string().min(22).required(),
+    patientId: joi.string().min(MIN_ID_LENGTH).required(),
     cardId: joi.string().optional(),
     bonusDeduction: joi.number().positive().allow(0).required(),
     paymentMethod: joi.string().valid('Cash', 'Card').required()
 })
 
-const activateStaticPatient = async (req,res, next) => {
+const activateInpatient = async (req,res, next) => {
     if(isNaN(bonusPercentage)) throw new ServerError("BONUS_PERCENTAGE is not specified in the .env"); 
     const session = await mongoose.startSession();
     session.startTransaction(); 
@@ -87,4 +87,4 @@ const activateStaticPatient = async (req,res, next) => {
     }
 }
 
-export default activateStaticPatient;
+export default activateInpatient;
