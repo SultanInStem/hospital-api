@@ -3,6 +3,7 @@ import User from "../../../db/models/User.js";
 import { StatusCodes } from "http-status-codes";
 import joi from "joi";
 import validateData from "../../../utils/validateData.js";
+import { NotFound } from "../../../customErrors/Errors.js"; 
 
 const schema = joi.object({
     title: joi.string().required(),

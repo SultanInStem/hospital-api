@@ -14,6 +14,7 @@ const joiSchema = joi.object({
     cardId: joi.string().optional(),
     paymentMethod: joi.string().valid('Cash','Card').required(),
     servicePrice: joi.number().min(0).required(),
+    serviceTitle: joi.string().required(), 
     patientId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(), 
     serviceId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(),
     bonusDeduction: joi.number().min(0).allow(0).required()
@@ -32,7 +33,8 @@ const createMedicalRecord = async(req,res, next) => {
             paymentMethod, 
             cardId, 
             bonusDeduction,
-            servicePrice 
+            servicePrice, 
+            serviceTitle 
         } = data;
         console.log(data);
         if(servicePrice - bonusDeduction < 0) throw new BadRequest('Bonus deduction cannot exceed the price of the service');
@@ -84,6 +86,7 @@ const createMedicalRecord = async(req,res, next) => {
         // Create med-record and add it to the queue of the service
         const medRecordData = {
             isInpatient: false,
+            serviceTitle,
             patientId,
             patientFirstName: patient.firstName,
             patientLastName: patient.lastName,
