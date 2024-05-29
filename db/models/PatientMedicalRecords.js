@@ -40,6 +40,9 @@ const Schema = new mongoose.Schema({
     createdAt: {
         type: Number,
         required: true
+    }, 
+    queueNum: {
+        type: Number
     }
 }, {timestamps: true})
 
