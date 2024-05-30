@@ -96,7 +96,6 @@ const createMedicalRecord = async(req,res, next) => {
             createdAt: new Date().getTime()
         }
         const medRecord = new PatientMedicalRecord(medRecordData);
-        await medRecord.save({session}); 
         if(!medRecord) throw new BadRequest("Medical record hasn't been created");
         const service = await Service.findOneAndUpdate({_id: serviceId},
             {
@@ -113,7 +112,10 @@ const createMedicalRecord = async(req,res, next) => {
                 }
             }
         );
+        
         if(!service) throw new BadRequest("Failed to update the service");
+        medRecord['queueNum'] = service.currentQueue.length; 
+        await medRecord.save({session}); 
         // ----------------------------
         await session.commitTransaction(); 
         return res.status(StatusCodes.OK).json({success: true, medicalRecord: medRecord, payment});
