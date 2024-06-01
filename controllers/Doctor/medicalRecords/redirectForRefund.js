@@ -2,8 +2,13 @@ import { StatusCodes } from "http-status-codes";
 import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
 import { BadRequest, NotFound } from "../../../customErrors/Errors.js";
 import Service from "../../../db/models/Service.js";
+import mongoose from "mongoose";
 
 const redirectForRefund = async (req,res, next) => {
+
+    const session = await mongoose.startSession();
+    session.startTransaction(); 
+    let isTransactionFailed = false; 
     try{
         const { id } = req.params; 
         const recordProj = {
@@ -13,23 +18,15 @@ const redirectForRefund = async (req,res, next) => {
             paymentRecord: 0,
             createdAt: 0
         };
-        const medRecord = await PatientMedicalRecord.findById(id, recordProj); 
+        const medRecord = await PatientMedicalRecord.findByIdAndUpdate(id, 
+            { $set: { status: "toRefund" } }, 
+            { new: false, projection: recordProj, session }
+        ); 
         
         if(!medRecord) throw new NotFound("Medical Record not found"); 
         else if(medRecord.status === 'completed') throw new BadRequest("This record has already been completed");
         else if(medRecord.status === 'refunded') throw new BadRequest("The refund has already been made"); 
         else if(medRecord.status === 'toRefund') throw new BadRequest("This record is waiting for the refund");
-
-        const updatedRecord = await PatientMedicalRecord.findByIdAndUpdate(id, 
-            {
-                $set: { status: "toRefund"}
-            },
-            {
-                new: true,
-                projection: recordProj
-            }
-        ); 
-        if(!updatedRecord) throw new NotFound("Medical Record not found"); 
 
 
         const updatedService = await Service.findByIdAndUpdate(updatedRecord.serviceId, 
@@ -44,15 +41,23 @@ const redirectForRefund = async (req,res, next) => {
                 }
             }
         );
-        return res.status(StatusCodes.OK).json(
-            { 
-                success: true, 
-                msg: "Patient has been redirected for the refund", 
-                medicalRecord: updatedRecord
-            }
-        );
+
+        const response = {
+            success: true, 
+            medicalRecord: medRecord, 
+            service: updatedService
+        };
+
+        await session.commitTransaction(); 
+        return res.status(StatusCodes.OK).json(response);
     }catch(err){
+        isTransactionFailed = true;
         return next(err); 
+    }finally{
+        if(isTransactionFailed){
+            await session.abortTransaction(); 
+        }
+        await session.endSession();
     }
 }
 export default redirectForRefund;

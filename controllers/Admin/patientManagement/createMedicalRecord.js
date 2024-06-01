@@ -8,6 +8,7 @@ import Patient from "../../../db/models/Patient.js";
 import validateData from "../../../utils/validateData.js";
 import BonusCard from "../../../db/models/BonusCard.js";
 import mongoose from "mongoose";
+
 const bonusPercentage = Number(process.env.BONUS_PERCENTAGE);
 
 const joiSchema = joi.object({
@@ -36,7 +37,6 @@ const createMedicalRecord = async(req,res, next) => {
             servicePrice, 
             serviceTitle 
         } = data;
-        console.log(data);
         if(servicePrice - bonusDeduction < 0) throw new BadRequest('Bonus deduction cannot exceed the price of the service');
         // check if patient exists 
         const patient = await Patient.findById(patientId, 
@@ -49,7 +49,7 @@ const createMedicalRecord = async(req,res, next) => {
             gender: 0
         });
         if(typeof patient === 'undefined' || patient === null) throw new NotFound("Patient not found, create the patient");
-        //-------------------------- 
+        //--------
          
 
         // if bonus card exists, make sure the bonusDeduction does exceed the banalce on the card
@@ -64,7 +64,7 @@ const createMedicalRecord = async(req,res, next) => {
                 {session}
             );
         }
-        //--------------------------
+        //-------
 
         // create payment record
         const paymentData = {
@@ -80,7 +80,7 @@ const createMedicalRecord = async(req,res, next) => {
         const payment = new Payment(paymentData); 
         if(!payment) throw new BadRequest('Payment was unsuccessful');
         await payment.save({ session });
-        //----------------------
+        //------
 
 
         // Create med-record and add it to the queue of the service
@@ -111,12 +111,20 @@ const createMedicalRecord = async(req,res, next) => {
                     description: 0
                 }
             }
-        );
-        
+        );        
         if(!service) throw new BadRequest("Failed to update the service");
-        medRecord['queueNum'] = service.currentQueue.length; 
+        // queue numbering for a service 
+        if(service.currentQueue.length === 0){
+            medRecord['queueNum'] = 1; 
+        }else{
+            const lastRecordId = service.currentQueue[service.currentQueue.length - 1]; 
+            console.log(lastRecord);
+            const lastRecord = await PatientMedicalRecord.findById(lastRecordId, { queueNum: 1 });
+            medRecord['queueNum'] = lastRecord.queueNum + 1;  
+        }
+        // -------
         await medRecord.save({session}); 
-        // ----------------------------
+        // -------
         await session.commitTransaction(); 
         return res.status(StatusCodes.OK).json({success: true, medicalRecord: medRecord, payment});
     }catch(err){
