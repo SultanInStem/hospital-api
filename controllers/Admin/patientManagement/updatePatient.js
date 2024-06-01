@@ -20,6 +20,7 @@ const updatePatient = async (req, res, next) => {
     try{
         const data = await validateData(joiSchema,req.body);
         const patientId = data['patientId']; 
+        delete data['patientId']; 
         const { PCP, phoneNumber, firstName, lastName} = data; 
         const patient = await Patient.findById(patientId);
         if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`); 
