@@ -55,7 +55,8 @@ const directToService = async(req, res, next) => {
         //---
 
         // create medical record 
-        const medRecord = await PatientMedicalRecord.create({
+
+        const medRecordData = {
             isInpatient: true,
             serviceId: service._id, 
             serviceTitle: service.title,
@@ -64,7 +65,16 @@ const directToService = async(req, res, next) => {
             patientLastName: patient.lastName,
             status: 'queue',
             createdAt: currentTime
-        });
+        }
+        if(service.currentQueue.length === 0){
+            medRecordData['queueNum'] = 1; 
+        }else{
+            const lastRecordId = service.currentQueue[service.currentQueue.length - 1]; 
+            const lastRecord = await PatientMedicalRecord.findById(lastRecordId);
+            medRecordData['queueNum'] = lastRecord.queueNum + 1; 
+        }
+
+        const medRecord = await PatientMedicalRecord.create(medRecordData);
         if(!medRecord) throw new BadRequest("Med record hasn't been created. Consult Tech Support.");
         //---
 
