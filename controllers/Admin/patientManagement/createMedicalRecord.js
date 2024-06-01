@@ -39,15 +39,10 @@ const createMedicalRecord = async(req,res, next) => {
         } = data;
         if(servicePrice - bonusDeduction < 0) throw new BadRequest('Bonus deduction cannot exceed the price of the service');
         // check if patient exists 
-        const patient = await Patient.findById(patientId, 
-        {
-            uniqueId: 0, 
-            phoneNumber: 0, 
-            createdAt: 0, 
-            updatedAt: 0, 
-            dateOfBirth: 0,
-            gender: 0
-        });
+        const currentUnix = new Date().getTime(); 
+        const patient = await Patient.findByIdAndUpdate(patientId,
+            { $set: { lastSeen: currentUnix } }
+        );
         if(typeof patient === 'undefined' || patient === null) throw new NotFound("Patient not found, create the patient");
         //--------
          
