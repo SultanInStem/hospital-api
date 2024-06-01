@@ -42,7 +42,8 @@ const Schema = new mongoose.Schema({
         required: true
     }, 
     queueNum: {
-        type: Number
+        type: Number, 
+        required: true
     }
 }, {timestamps: true})
 
