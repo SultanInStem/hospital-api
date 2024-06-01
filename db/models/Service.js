@@ -25,7 +25,8 @@ const ServiceSchema = new mongoose.Schema({
     },
     currentQueue: {
         type: [mongoose.Types.ObjectId],
-        default: []
+        default: [], 
+        required: true
     }
 }, {timestamps: true})
 
