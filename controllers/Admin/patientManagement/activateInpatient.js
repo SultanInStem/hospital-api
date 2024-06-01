@@ -7,7 +7,9 @@ import { BadRequest, NotFound, ServerError } from "../../../customErrors/Errors.
 import validateData from "../../../utils/validateData.js";
 import BonusCard from "../../../db/models/BonusCard.js";
 import mongoose from "mongoose";
-import unixTimeToDays from "../../../utils/unixTimeToDays.js";
+import unixTimeToDays from "../../../utils/unixTimeToDays.js"; 
+import User from "../../../db/models/User.js"; 
+
 const bonusPercentage = Number(process.env.BONUS_PERCENTAGE); 
 const MIN_ID_LENGTH = Number(process.env.MONGO_MIN_ID_LENGTH); 
 const joiSchema = joi.object({
@@ -16,7 +18,8 @@ const joiSchema = joi.object({
     patientId: joi.string().min(MIN_ID_LENGTH).required(),
     cardId: joi.string().optional(),
     bonusDeduction: joi.number().positive().allow(0).required(),
-    paymentMethod: joi.string().valid('Cash', 'Card').required()
+    paymentMethod: joi.string().valid('Cash', 'Card').required(), 
+    PCP: joi.string().min(MIN_ID_LENGTH).optional() // id of a doctor who will supervise the patient 
 })
 
 const activateInpatient = async (req,res, next) => {
@@ -32,11 +35,26 @@ const activateInpatient = async (req,res, next) => {
             patientId,
             paymentMethod,
             packages,
-            expiresAt 
+            expiresAt, 
+            PCP 
         } = data; 
         const currentUnix = new Date().getTime();
         if(expiresAt - currentUnix < 0) throw new BadRequest("Expiration date cannot be in the past"); 
         const treatmentDurationDays = unixTimeToDays(expiresAt - currentUnix);
+
+        // validate patient 
+        const patient = await Patient.findById(patientId); 
+        if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`);
+        if(PCP){
+            const doc = await User.findById(PCP);
+            if(!doc || doc.role !== 'Doctor') throw new NotFound(`Primary care physician (PCP) with ID ${PCP} is not found`);  
+            patient.set({PCP: PCP}); 
+        }else{
+            if(!patient.PCP) throw new BadRequest("Patient does not have a supervising docotor. Please provide PCP"); 
+        }
+        patient.set({ packages: packages, expiresAt: expiresAt }); 
+        await patient.save({session}); 
+        // ---- 
 
         // get the packages and calculate the price 
         let netPrice = 0; 
@@ -47,37 +65,36 @@ const activateInpatient = async (req,res, next) => {
             netPrice += (medPackage.price * treatmentDurationDays); 
         }
         if(netPrice < bonusDeduction) throw new BadRequest("Bonus deduction cannot exceed the net price");
-        if(cardId){  // if cardId is prvided, calcualte adjustment and update the balance
+        if(cardId){  // if cardId is prvided, calculate adjustment and update the balance
             const adjustment = -bonusDeduction + (netPrice - bonusDeduction) * bonusPercentage;
             const bonusCard = await BonusCard.findByIdAndUpdate(cardId, 
                 { $inc: { balance: adjustment } }, 
                 { new: false, session }
             );
             if(!bonusCard) throw new NotFound(`Bonus card with ID ${cardId} not found`);
-            else if(bonusDeduction > bonusCard.balance) throw new BadRequest("Bonus card does not possess sufficient funds");
+            else if(bonusDeduction > bonusCard.balance) throw new BadRequest("Bonus card does not have sufficient funds");
         }
-        
-        const patient = await Patient.findByIdAndUpdate(patientId,  // update the patient 
-        { $set: { packages: packages, expiresAt: expiresAt} },
-        { new: true, session }
-        );
-        if(!patient.isStationary) throw new BadRequest(`Patient with ID ${patientId} is not stationary`); 
-        else if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`);
-    
+
         const paymentData = {
             paymentMethod,
             patientId,
             amountBeforeDeduction: netPrice,
             bonusDeduction,
             amountFinal: netPrice - bonusDeduction,
-            packagesPaid: packages
+            packagesPaid: packages, 
+            createdAt: currentUnix
         }; 
         const payment = await Payment.create([paymentData], {session, new: true}); // create payment record  
         if(!payment) throw new BadRequest("Payment was unsuccessful"); 
-
+        
         await session.commitTransaction(); 
-        return res.status(StatusCodes.OK).json({success: true}); 
+        const response = {
+            success: true, 
+            patient
+        }
+        return res.status(StatusCodes.OK).json(response); 
     }catch(err){
+        isTransactionFailed = true; 
         return next(err); 
     }finally{
         if(isTransactionFailed){

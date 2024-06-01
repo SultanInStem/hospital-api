@@ -3,6 +3,7 @@ import MedPackage from "../../../db/models/MedPackage.js";
 import joi from "joi"; 
 import validateData from "../../../utils/validateData.js";
 const joiSchema = joi.object({
+    title: joi.string().required(), 
     price: joi.number().positive().required(),
     servicesAllowed: joi.array().items(joi.string().min(20)).min(1).required()
 })
