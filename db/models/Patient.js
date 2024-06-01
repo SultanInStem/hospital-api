@@ -39,6 +39,10 @@ const PatientSchema = new mongoose.Schema({
     }, 
     PCP: { // primary care physician 
         type: mongoose.Types.ObjectId
+    },
+    lastSeen: {
+        type: Number, 
+        required: true
     }
 }, {timestamps: true})
 

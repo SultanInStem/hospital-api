@@ -22,6 +22,7 @@ const createPatient = async (req, res, next) => {
         };
         const patientID = getPatientId(seed);
         data['uniqueId'] = patientID;
+        data['lastSeen'] = new Date().getTime(); 
         const patient = await Patient.create(data);
         return res.status(StatusCodes.CREATED).json({success: true, patient})
     }catch(err){

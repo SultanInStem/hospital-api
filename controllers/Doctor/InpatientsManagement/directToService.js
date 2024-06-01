@@ -17,11 +17,13 @@ const directToService = async(req, res, next) => {
         const docId = req.userId; 
         const data = await validateData(joiSchema, req.body); 
         const { serviceId, patientId } = data; 
-        const patient = await Patient.findById(patientId);
+        const currentTime = new Date().getTime();
+
+        const patient = await Patient.findByIdAndUpdate(patientId, { $set: { lastSeen: currentTime } });
+        
         if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`); 
         else if(patient.packages.length < 1) throw new BadRequest("Patient does not have any active packages");
         
-        const currentTime = new Date().getTime(); 
         if(patient.expiresAt - currentTime <= 0){ // check expiresAt UNIX time
             await Patient.findByIdAndUpdate(patientId, { $set: { packages: [], expiresAt: 0 } });
             throw new BadRequest("Patient's time as a static patient has expired");
