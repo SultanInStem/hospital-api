@@ -74,7 +74,7 @@ const createMedicalRecord = async(req,res, next) => {
         };
         const payment = new Payment(paymentData); 
         if(!payment) throw new BadRequest('Payment was unsuccessful');
-        await payment.save({ session });
+        await payment.save({ session }); 
         //------
 
 
@@ -88,9 +88,11 @@ const createMedicalRecord = async(req,res, next) => {
             paymentRecord: payment['_id'],
             status: 'queue',
             serviceId: serviceId,
-            createdAt: new Date().getTime()
+            createdAt: new Date().getTime(),
+            queueNum: 1
         }
         const medRecord = new PatientMedicalRecord(medRecordData);
+        
         if(!medRecord) throw new BadRequest("Medical record hasn't been created");
         const service = await Service.findOneAndUpdate({_id: serviceId},
             {
@@ -98,7 +100,7 @@ const createMedicalRecord = async(req,res, next) => {
             }, 
             {
                 session, 
-                new: true,
+                new: false,
                 projection: {
                     createdAt: 0,
                     updatedAt: 0,
@@ -108,14 +110,14 @@ const createMedicalRecord = async(req,res, next) => {
             }
         );        
         if(!service) throw new BadRequest("Failed to update the service");
+
         // queue numbering for a service 
         if(service.currentQueue.length === 0){
-            medRecord['queueNum'] = 1; 
+            medRecord.set({queueNum: 1}); 
         }else{
             const lastRecordId = service.currentQueue[service.currentQueue.length - 1]; 
-            console.log(lastRecord);
-            const lastRecord = await PatientMedicalRecord.findById(lastRecordId, { queueNum: 1 });
-            medRecord['queueNum'] = lastRecord.queueNum + 1;  
+            const lastRecord = await PatientMedicalRecord.findById(lastRecordId);
+            medRecord.set({queueNum: lastRecord.queueNum + 1 });
         }
         // -------
         await medRecord.save({session}); 
