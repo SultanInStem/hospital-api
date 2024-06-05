@@ -29,7 +29,7 @@ const redirectForRefund = async (req,res, next) => {
         else if(medRecord.status === 'toRefund') throw new BadRequest("This record is waiting for the refund");
 
 
-        const updatedService = await Service.findByIdAndUpdate(updatedRecord.serviceId, 
+        const updatedService = await Service.findByIdAndUpdate(medRecord.serviceId, 
             {
                 $pull: { currentQueue: id } 
             }, 
