@@ -1,3 +1,3 @@
 ## To-do
-- fix createMedicalRecord 
-- fix redirect for refund
+- create Cleanup functions 
+- test all endpoints
