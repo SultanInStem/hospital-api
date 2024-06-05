@@ -14,7 +14,6 @@ import helmet from "helmet";
 
 
 const PORT = process.env.PORT || 3000; 
-const CRON_INTERVAL = 3600000;
 import express from "express";
 const app = express();
 
@@ -38,11 +37,28 @@ const start = async () => {
         await connect(process.env.MONGO_URL);
         app.listen(PORT, () => {
             console.log('server is running'); 
+
+            const ipAddressIntervalId = setInterval(() => {
+                ipRecords.clear();
+            }, 3600000); 
+
+            const dbCleanupIntervalId = setInterval(() => {
+
+            }, 1000 * 60 * 60 * 24);
+            process.on("SIGINT", () => {
+                console.log("Server is shutting down...");
+                clearInterval(ipAddressIntervalId);
+                clearInterval(dbCleanupIntervalId);
+                process.exit();
+            }); 
+            process.on("SIGTERM", () => {
+                console.log("Server is shutting down...");
+                clearInterval(ipAddressIntervalId);
+                clearInterval(dbCleanupIntervalId); 
+                process.exit(); 
+            }); 
         });  
-        const cleanUp = () => {
-            ipRecords.clear(); 
-        }
-        setInterval(cleanUp, CRON_INTERVAL);
+
     }catch(err){
         console.log(err)
     }
