@@ -49,7 +49,7 @@ const createMedicalRecord = async(req,res, next) => {
 
         // if bonus card exists, make sure the bonusDeduction does exceed the banalce on the card
         // and the balance of the card
-        const bonusCard = await BonusCard.findOne({cardId: cardId});
+        const bonusCard = await BonusCard.findOne({cardId: cardId}); 
         if(bonusCard){
             if(bonusCard.balance < bonusDeduction) throw new BadRequest("Bonus deduction cannot exceed the balance on the card");
             const adjustment = (bonusCard.balance - bonusDeduction) + (servicePrice - bonusDeduction) * bonusPercentage;

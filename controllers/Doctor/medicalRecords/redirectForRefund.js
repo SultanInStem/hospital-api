@@ -41,6 +41,7 @@ const redirectForRefund = async (req,res, next) => {
                 }
             }
         );
+        if(!updatedService) throw new NotFound(`Service with ID ${medRecord.serviceId} does not exist`);
 
         const response = {
             success: true, 
