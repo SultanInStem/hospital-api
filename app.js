@@ -43,7 +43,7 @@ const start = async () => {
             }, 3600000); 
 
             const dbCleanupIntervalId = setInterval(() => {
-
+                console.log("this function runs once a day");
             }, 1000 * 60 * 60 * 24);
             process.on("SIGINT", () => {
                 console.log("Server is shutting down...");
