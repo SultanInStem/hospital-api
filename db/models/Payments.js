@@ -36,7 +36,7 @@ const PaymentSchema = new mongoose.Schema({
         default: false
     },
     bonusCardId: {
-        type: mongoose.Types.ObjectId
+        type: String
     },
     createdAt: {
         type: Number,
