@@ -1,8 +1,8 @@
 import { StatusCodes } from "http-status-codes";
-import PatientMedicalRecord from "../../db/models/PatientMedicalRecords.js";
+import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
 import joi from "joi"; 
-import validateData from "../../utils/validateData.js";
-import Payment from "../../db/models/Payments.js"; 
+import validateData from "../../../utils/validateData.js";
+import Payment from "../../../db/models/Payments.js"; 
 
 const joiSchema = joi.object({
     size: joi.string().regex(/^\d+$/),
