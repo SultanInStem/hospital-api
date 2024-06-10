@@ -3,13 +3,14 @@ import getAllPatients from "../controllers/Public/Patients/getAllPatients.js";
 import searchPatients from "../controllers/Public/Patients/searchPatients.js";
 import getMedicalRecords from "../controllers/Public/MedicalRecords/getMedicalRecords.js";
 import getMedPackages from "../controllers/Public/getMedPackages.js";
-import getPaymnets from "../controllers/Public/getPayments.js";
 import getSinglePatient from "../controllers/Public/Patients/getSinglePatient.js";
 import getSingleRecord from "../controllers/Public/MedicalRecords/getSingleMedRecord.js";
 import getServices from "../controllers/Public/Services/getServices.js";
 import getSingleService from "../controllers/Public/Services/getSingleService.js";
 import getSingleDoctor from "../controllers/Public/Doctors/getSingleDoctor.js";
 import getDoctors from "../controllers/Public/Doctors/getDoctors.js";
+import getPayments from "../controllers/Public/Payments/getPayments.js";
+import getSinglePayment from "../controllers/Public/Payments/getSinglePayment.js";
 const router = express.Router(); 
 // Patients 
 router.get('/patients', getAllPatients);
@@ -37,7 +38,8 @@ router.get('/packages', getMedPackages);
 // 
 
 // Payments 
-router.get('/payments', getPaymnets); 
+router.get('/payments', getPayments);
+router.get('/payments/single/:id', getSinglePayment); 
 // 
 
 
