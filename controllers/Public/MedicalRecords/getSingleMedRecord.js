@@ -1,9 +1,9 @@
-import { NotFound } from "../../customErrors/Errors.js";
-import PatientMedicalRecord from "../../db/models/PatientMedicalRecords.js";
+import { NotFound } from "../../../customErrors/Errors.js";
+import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
 import { StatusCodes } from "http-status-codes";
 
 
-const getOneRecord = async(req, res, next) => {
+const getSingleRecord = async(req, res, next) => {
     try{
         const { id } = req.params;
         const record = await PatientMedicalRecord.findById(id); 
@@ -14,4 +14,4 @@ const getOneRecord = async(req, res, next) => {
     }
 }
 
-export default getOneRecord;
+export default getSingleRecord;

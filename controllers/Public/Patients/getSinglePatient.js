@@ -5,7 +5,7 @@ const getSinglePatient = async (req, res, next) =>{
     try{
         const { id } = req.params;
         const patient = await Patient.findById(id);
-        if(!patient) throw new NotFound(`Patient with ID of ${id} not found`);
+        if(!patient) throw new NotFound(`Patient with ID of ${id} not found`); 
         return res.status(StatusCodes.OK).json({success: true, patient});
     }catch(err){
         return next(err); 
