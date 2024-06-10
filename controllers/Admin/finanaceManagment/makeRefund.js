@@ -41,7 +41,11 @@ const makeRefund = async(req, res, next) => {
         }
 
         await session.commitTransaction(); 
-        return res.status(StatusCodes.OK).json({success: true, msg: "Refund has been made"}); 
+        const response = {
+            success: true, 
+            msg: "Refund has been made"
+        }
+        return res.status(StatusCodes.OK).json(response); 
     }catch(err){
         return next(err);
     }finally{

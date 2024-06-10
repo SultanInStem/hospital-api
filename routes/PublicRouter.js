@@ -6,6 +6,7 @@ import getServices from "../controllers/Public/getServices.js";
 import getDoctors from "../controllers/Public/getDoctors.js"; 
 import getMedPackages from "../controllers/Public/getMedPackages.js";
 import getPaymnets from "../controllers/Public/getPayments.js";
+import getOneRecord from "../controllers/Public/getOneMedRecord.js";
 const router = express.Router(); 
 // Patients 
 router.get('/patients', getAllPatients);
@@ -17,7 +18,8 @@ router.get('/services', getServices);
 //
 
 // Medical records
-router.get("/medicalrecords", getMedicalRecords); // ":id" is of the patient
+router.get("/medicalrecords", getMedicalRecords);
+router.get("/medicalrecords/:id", getOneRecord); // id of the medical record
 //
 
 // Doctors 
