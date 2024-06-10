@@ -27,12 +27,12 @@ const makeRefund = async(req, res, next) => {
             { new: false, session }
         );
 
-        // if payment was made with BonusCard, deposit the refund onto the BonusCard
+        // // if payment was made with BonusCard, deposit the refund onto the BonusCard
         if(payment['bonusCardId']){
             const cardId = payment['bonusCardId']; 
             const refundedBonus = payment.bonusDeduction; 
             if(refundedBonus > 0){
-                const updatedBonus = await BonusCard.findByIdAndUpdate(cardId, 
+                const updatedBonus = await BonusCard.findByIdAndUpdate({cardId: cardId}, 
                     { $inc: { balance: refundedBonus } }, 
                     { session }
                 ); 
