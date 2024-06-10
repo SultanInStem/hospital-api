@@ -2,13 +2,14 @@ import express from "express";
 import getAllPatients from "../controllers/Public/Patients/getAllPatients.js"; 
 import searchPatients from "../controllers/Public/Patients/searchPatients.js";
 import getMedicalRecords from "../controllers/Public/MedicalRecords/getMedicalRecords.js";
-import getDoctors from "../controllers/Public/getDoctors.js"; 
 import getMedPackages from "../controllers/Public/getMedPackages.js";
 import getPaymnets from "../controllers/Public/getPayments.js";
 import getSinglePatient from "../controllers/Public/Patients/getSinglePatient.js";
 import getSingleRecord from "../controllers/Public/MedicalRecords/getSingleMedRecord.js";
 import getServices from "../controllers/Public/Services/getServices.js";
 import getSingleService from "../controllers/Public/Services/getSingleService.js";
+import getSingleDoctor from "../controllers/Public/Doctors/getSingleDoctor.js";
+import getDoctors from "../controllers/Public/Doctors/getDoctors.js";
 const router = express.Router(); 
 // Patients 
 router.get('/patients', getAllPatients);
@@ -28,6 +29,7 @@ router.get("/medicalrecords/single/:id", getSingleRecord); // id of the medical 
 
 // Doctors 
 router.get('/doctors', getDoctors); 
+router.get("/doctors/single/:id", getSingleDoctor);
 //
 
 // Med-Packages 
