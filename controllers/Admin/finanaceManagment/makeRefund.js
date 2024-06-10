@@ -18,7 +18,7 @@ const makeRefund = async(req, res, next) => {
         // if status of the medRecord wasn't toRefund, throw an error 
         if(!medRecord) throw new NotFound(`Med Record with ID ${medRecordId} not found`);
         else if(medRecord.status !== 'toRefund' && medRecord.status !== 'queue') throw new BadRequest("Record is not eligible for refund");
-        else if(medRecord.isInpatient) throw new BadRequest("Inapatients are not elligible for the refund");
+        else if(medRecord.isInpatient) throw new BadRequest("Inpatients are not elligible for the refund");
 
         // find payment record 
         const paymentId = medRecord.paymentRecord; 
