@@ -4,8 +4,10 @@ import Service from "../../../db/models/Service.js";
 import Payment from "../../../db/models/Payments.js";
 import { BadRequest, NotFound, ServerError } from "../../../customErrors/Errors.js";
 import BonusCard from "../../../db/models/BonusCard.js";
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 const bonusPercentage = Number(process.env.BONUS_PERCENTAGE);
+
+
 const completeRecord = async(req, res, next) => {
     const session = await mongoose.startSession(); 
     session.startTransaction(); 
@@ -14,11 +16,11 @@ const completeRecord = async(req, res, next) => {
         if(isNaN(bonusPercentage)) throw new ServerError("ENV variable failed at completeRecord.js");
         const { id } = req.params; 
         const recordProj = {
-            paymentRecord: 0, 
             patientFirstName: 0, 
             patientLastName: 0, 
             patientId: 0
         }
+
         const medRecord = await PatientMedicalRecord.findByIdAndUpdate(id,
             { $set: { status: "completed" } }, 
             { new: false, projection: recordProj }
@@ -33,15 +35,15 @@ const completeRecord = async(req, res, next) => {
         );
 
         // if record is about to be closed, deposit the bonus 
+        const paymentId = medRecord.paymentRecord;
         if(!medRecord.isInpatient){
-            const paymentId = medRecord['paymentRecord']; 
             const payment = await Payment.findById(paymentId);
             if(!payment) throw new NotFound("Payment Record not found");
             const cardId = payment['bonusCardId'];
-            const bonusCard = await BonusCard.findById(cardId);
+            const bonusCard = await BonusCard.findOne({cardId: cardId}, {}, {session});
             if(bonusCard){
                 const adjustment = (bonusCard.balance - payment.bonusDeduction) + (service.price - payment.bonusDeduction) * bonusPercentage; 
-                await BonusCard.findByIdAndUpdate(cardId, 
+                await BonusCard.findOneAndUpdate({cardId: cardId}, 
                     { $inc: { balance: adjustment } }, 
                     { session }
                 );       
