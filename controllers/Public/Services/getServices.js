@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import joi from "joi"; 
 import validateData from "../../../utils/validateData.js";
-import "../../../db/models/Service.js"; 
+import Service from "../../../db/models/Service.js";
 const joiSchema = joi.object({
     price: joi.number().min(0).allow(0).optional(),
     title: joi.string().optional(),
