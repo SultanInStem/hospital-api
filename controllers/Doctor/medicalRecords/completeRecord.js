@@ -42,7 +42,7 @@ const completeRecord = async(req, res, next) => {
             const cardId = payment['bonusCardId'];
             const bonusCard = await BonusCard.findOne({cardId: cardId}, {}, {session});
             if(bonusCard){
-                const adjustment = (bonusCard.balance - payment.bonusDeduction) + (service.price - payment.bonusDeduction) * bonusPercentage; 
+                const adjustment = (service.price - payment.bonusDeduction) * bonusPercentage; 
                 await BonusCard.findOneAndUpdate({cardId: cardId}, 
                     { $inc: { balance: adjustment } }, 
                     { session }

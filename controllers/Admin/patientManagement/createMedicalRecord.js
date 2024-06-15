@@ -44,10 +44,14 @@ const createMedicalRecord = async(req,res, next) => {
             { $set: { lastSeen: currentUnix } }
         );
         if(typeof patient === 'undefined' || patient === null) throw new NotFound("Patient not found, create the patient");
-        //--------
+        
          
 
-        const bonusCard = await BonusCard.findOne({cardId: cardId}); 
+        const bonusCard = await BonusCard.findOneAndUpdate(
+            { cardId: cardId },
+            { $inc: { balance: -bonusDeduction } }, 
+            { session, new: false }
+        ); 
         if(bonusCard && bonusCard.balance < bonusDeduction) throw new BadRequest("Bonus deduction cannot exceed the balance on the card");
 
         // create payment record
@@ -64,7 +68,6 @@ const createMedicalRecord = async(req,res, next) => {
         const payment = new Payment(paymentData); 
         if(!payment) throw new BadRequest('Payment was unsuccessful');
         await payment.save({ session }); 
-        //------
 
 
         // Create med-record and add it to the queue of the service
@@ -93,13 +96,12 @@ const createMedicalRecord = async(req,res, next) => {
                 projection: {
                     createdAt: 0,
                     updatedAt: 0,
-                    title: 0,
                     description: 0
                 }
             }
         );        
         if(!service) throw new BadRequest("Failed to update the service");
-        else if(service.price !== price || service.title !== serviceTitle) throw new BadRequest("Incorrect data for service is provided");
+        else if(service.price !== servicePrice || service.title !== serviceTitle) throw new BadRequest("Incorrect data for service is provided");
 
         // queue numbering for a service 
         if(service.currentQueue.length === 0){
@@ -109,7 +111,6 @@ const createMedicalRecord = async(req,res, next) => {
             const lastRecord = await PatientMedicalRecord.findById(lastRecordId);
             medRecord.set({queueNum: lastRecord.queueNum + 1 });
         }
-        // -------        
         await medRecord.save({session});
 
         await session.commitTransaction(); 
