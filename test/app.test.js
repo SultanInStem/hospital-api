@@ -14,8 +14,7 @@ afterEach((done) => {
     server.close(done);
 })
 describe('AUTH ROUTER /api/v1/auth', function(){
-    // this.timeout(5000);
-    it('should return 200 OK', async function(){
+    it('POST /api/v1/auth/login', async function(){
             const res = await request(app)
             .post('/api/v1/auth/login')
             .send({ username: 'admin@gmail.com', password: "mypass123" })
@@ -53,7 +52,7 @@ describe('AUTH ROUTER /api/v1/auth', function(){
     //     expect(res).to.be.an('object');
     // }) 
 
-    it("Refresh token api", async() => {
+    it("POST /api/v1/auth/refreshtoken", async() => {
         const res = await request(app)
         .post('/api/v1/auth/refreshtoken')
         .send({refreshToken: auth['refreshToken']})
@@ -82,13 +81,74 @@ describe('PUBLIC ROUTER, /api/v1/public', () => {
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('patients');
         expect(res.body.patients).to.be.an('array');
+        testData['patient'] = res.body.patients[0]; 
     }) 
 
     it('GET /api/v1/public/patients/single/:id', async function(){
         const res = await request(app)
-        .get('/api/v1/public/patients/single/:id')
+        .get('/api/v1/public/patients/single/' + testData['patient']._id)
         .set('Authorization', 'Bearer ' + auth['accessToken'])
         .set('Content-Type', 'application/json')
-        .expect(StatusCodes.OK)
+        .expect(StatusCodes.OK); 
+
+        assert(res.body.success); 
+
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('patient');
+    });
+
+    it('GET /api/v1/public/services', async function(){
+        const res = await request(app)
+        .get('/api/v1/public/services/?size=-1')
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);
+
+        assert(res.body.success); 
+
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('services');
+        expect(res.body.services).to.be.an('array');
+        testData['service'] = res.body.services[0];
     })
+    it('GET /api/v1/public/services/single/:id', async function(){
+        const res = await request(app)
+        .get('/api/v1/public/services/single/' + testData['service']._id)
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);
+
+        assert(res.body.success); 
+
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('service');
+        expect(res.body.service).to.be.an('object');
+    })
+
+    it('GET /api/v1/public/medicalrecords', async function(){
+        const res = await request(app)
+        .get("/api/v1/public/medicalrecords")
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);  
+
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object'); 
+        expect(res.body).to.have.property('medicalRecords'); 
+        expect(res.body.medicalRecords).to.be.an('array');
+        testData['medicalRecord'] = res.body.medicalRecords[0];
+    });
+
+    it('GET /api/v1/public/medicalrecords/single/:id', async function(){
+        const res = await request(app)
+        .get("/api/v1/public/medicalrecords/single/" + testData['medicalRecord']._id)
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);  
+
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object'); 
+        expect(res.body).to.have.property('medicalRecords'); 
+        expect(res.body.medicalRecord).to.be.an('object');
+    });
 });
