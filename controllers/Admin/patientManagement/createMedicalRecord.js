@@ -49,7 +49,6 @@ const createMedicalRecord = async(req,res, next) => {
 
         const bonusCard = await BonusCard.findOne({cardId: cardId}); 
         if(bonusCard && bonusCard.balance < bonusDeduction) throw new BadRequest("Bonus deduction cannot exceed the balance on the card");
-        // const adjustment = (bonusCard.balance - bonusDeduction) + (servicePrice - bonusDeduction) * bonusPercentage;
 
         // create payment record
         const paymentData = {
@@ -100,6 +99,7 @@ const createMedicalRecord = async(req,res, next) => {
             }
         );        
         if(!service) throw new BadRequest("Failed to update the service");
+        else if(service.price !== price || service.title !== serviceTitle) throw new BadRequest("Incorrect data for service is provided");
 
         // queue numbering for a service 
         if(service.currentQueue.length === 0){
@@ -109,9 +109,9 @@ const createMedicalRecord = async(req,res, next) => {
             const lastRecord = await PatientMedicalRecord.findById(lastRecordId);
             medRecord.set({queueNum: lastRecord.queueNum + 1 });
         }
-        // -------
-        await medRecord.save({session}); 
-        // -------
+        // -------        
+        await medRecord.save({session});
+
         await session.commitTransaction(); 
         return res.status(StatusCodes.OK).json({success: true, medicalRecord: medRecord, payment});
     }catch(err){
