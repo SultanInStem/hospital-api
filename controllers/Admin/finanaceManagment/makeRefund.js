@@ -32,7 +32,7 @@ const makeRefund = async(req, res, next) => {
             const cardId = payment['bonusCardId']; 
             const refundedBonus = payment.bonusDeduction; 
             if(refundedBonus > 0){
-                const updatedBonus = await BonusCard.findByIdAndUpdate({cardId: cardId}, 
+                const updatedBonus = await BonusCard.findOneAndUpdate({cardId: cardId}, 
                     { $inc: { balance: refundedBonus } }, 
                     { session }
                 ); 
