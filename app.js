@@ -79,3 +79,4 @@ app.use(ErrorHandler);
 app.use(NotFound);
 
 
+export default app;

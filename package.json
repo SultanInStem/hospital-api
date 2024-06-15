@@ -6,12 +6,13 @@
   "type": "module",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive"
   },
   "author": "Sam, Bob",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "chai": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.2",
     "express": "^4.18.2",
@@ -26,6 +27,7 @@
     "nanoid": "^5.0.5"
   },
   "devDependencies": {
-    "mocha": "^10.4.0"
+    "mocha": "^10.4.0",
+    "supertest": "^7.0.0"
   }
 }
