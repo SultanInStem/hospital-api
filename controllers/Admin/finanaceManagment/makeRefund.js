@@ -27,12 +27,11 @@ const makeRefund = async(req, res, next) => {
             { new: false, session }
         );
 
-        // // if payment was made with BonusCard, deposit the refund onto the BonusCard
+        // if payment was made with BonusCard, deposit the refund onto the BonusCard
         if(payment['bonusCardId']){
-            const cardId = payment['bonusCardId']; 
             const refundedBonus = payment.bonusDeduction; 
             if(refundedBonus > 0){
-                const updatedBonus = await BonusCard.findOneAndUpdate({cardId: cardId}, 
+                const updatedBonus = await BonusCard.findOneAndUpdate({cardId: payment['bonusCardId']}, 
                     { $inc: { balance: refundedBonus } }, 
                     { session }
                 ); 
@@ -43,7 +42,8 @@ const makeRefund = async(req, res, next) => {
         await session.commitTransaction(); 
         const response = {
             success: true, 
-            msg: "Refund has been made"
+            msg: "Refund has been made",
+            medRecord
         }
         return res.status(StatusCodes.OK).json(response); 
     }catch(err){
