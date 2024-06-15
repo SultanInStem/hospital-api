@@ -64,7 +64,6 @@ describe('AUTH ROUTER /api/v1/auth', function(){
         expect(res.body).to.have.property('refreshToken');
         auth['refreshToken'] = res.body.refreshToken; 
         auth['accessToken'] = res.body.accessToken; 
-
     })
 });
 
@@ -148,7 +147,45 @@ describe('PUBLIC ROUTER, /api/v1/public', () => {
 
         assert(res.body.success); 
         expect(res.body).to.be.an('object'); 
-        expect(res.body).to.have.property('medicalRecords'); 
+        expect(res.body).to.have.property('medicalRecord'); 
         expect(res.body.medicalRecord).to.be.an('object');
     });
+    it('GET /api/v1/public/doctors', async function(){
+        const res = await request(app)
+        .get("/api/v1/public/doctors")
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);  
+
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object'); 
+        expect(res.body).to.have.property('doctors'); 
+        expect(res.body.doctors).to.be.an('array');
+        testData['doctor'] = res.body.doctors[0];
+    })
+
+    it('GET /api/v1/public/doctors/single/:id', async function(){
+        const res = await request(app)
+        .get("/api/v1/public/doctors/single/" + testData['doctor']._id)
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);  
+
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object'); 
+        expect(res.body).to.have.property('doctor'); 
+        expect(res.body.doctor).to.be.an('object');
+    })
+    it('GET /api/v1/public/packages', async function(){
+        const res = await request(app)
+        .get("/api/v1/public/packages/?size=-1")
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);  
+
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object'); 
+        expect(res.body).to.have.property('packages'); 
+        expect(res.body.packages).to.be.an('array');
+    })
 });
