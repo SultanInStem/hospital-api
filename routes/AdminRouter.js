@@ -26,8 +26,8 @@ router.post("/medicalrecords/create", createMedicalRecord);
 router.patch("/finance/refund/:id", makeRefund); 
 // ------- 
 
-router.get('/bonuscards/single/:id', getCard);
 router.get('/bonuscards', getAllCards);
+router.get('/bonuscards/single/:id', getCard);
 router.post('/bonuscards', createCard);
 router.delete('/bonuscards/single/:id', deleteCard);
 

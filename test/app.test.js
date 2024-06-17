@@ -239,7 +239,7 @@ describe('ADMIN ROUTER /api/v1/admin', () => {
 
     it('GET /api/v1/admin/bonuscards', async function(){
         const res = await request(app)
-        .get('/api/v1/admin/bonuscard')
+        .get('/api/v1/admin/bonuscards')
         .set('Authorization', 'Bearer ' + auth['accessToken'])
         .set('Content-Type', 'application/json')
         .expect(StatusCodes.OK); 
@@ -252,6 +252,14 @@ describe('ADMIN ROUTER /api/v1/admin', () => {
     });
 
     it('GET /api/v1/admin/bonusCards/single/:id', async function(){
+        const res = await request(app)
+        .get('/api/v1/admin/bonuscards/single/' + testData['bonusCard'].cardId)
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK); 
 
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.a.property('bonusCard'); 
     })
 })
