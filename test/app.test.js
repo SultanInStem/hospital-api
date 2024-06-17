@@ -260,6 +260,30 @@ describe('ADMIN ROUTER /api/v1/admin', () => {
 
         assert(res.body.success); 
         expect(res.body).to.be.an('object');
-        expect(res.body).to.have.a.property('bonusCard'); 
+        expect(res.body).to.have.a.property('bonusCard');  
+    }); 
+    
+
+    it('DELETE /api/v1/admin/bonuscards/single/:id', async function(){
+        const res = await request(app)
+        .delete('/api/v1/admin/bonuscards/single/' + testData['bonusCard'].cardId)
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);
+
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object');
+    })
+
+    it('POST /api/v1/admin/bonuscards', async function(){
+        const res = await request(app)
+        .post('/api/v1/admin/bonuscards')
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .send({ firstName: "Test", lastName: "Test", cardId: testData['bonusCard'].cardId, balance: 0 })
+        .expect(StatusCodes.OK);
+
+        assert(res.body.success);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('bonusCard');
     })
 })
