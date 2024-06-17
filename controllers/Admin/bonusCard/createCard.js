@@ -15,7 +15,7 @@ const createCard = async (req, res, next) => {
         const data = await validateData(joiSchema,req.body); 
         const bonusCard = await BonusCard.create(data); 
         if(!bonusCard) throw new BadRequest("Failed to create a bonus card");  
-        return res.status(StatusCodes.OK).json({success: true}); 
+        return res.status(StatusCodes.OK).json({success: true, bonusCard}); 
     }catch(err){
         return next(err); 
     }
