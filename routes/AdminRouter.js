@@ -13,7 +13,7 @@ import getAllCards from "../controllers/Admin/bonusCard/getAllCards.js";
 
 // Patients 
 router.post("/patients/create", createPatient); 
-router.delete("/patients/:id", deletePatient);
+router.delete("/patients/single/:id", deletePatient);
 router.patch("/patients", updatePatient);
 router.patch("/patients/activate/inpatient", activateInpatient); 
 //------------

@@ -3,14 +3,14 @@ import { StatusCodes } from "http-status-codes";
 import joi from "joi"; 
 import validateData from "../../../utils/validateData.js"; 
 import { BadRequest, NotFound } from "../../../customErrors/Errors.js";
-const ID_LENGTH = Number(process.env.MONGO_MIN_ID_LENGTH); 
+import { mongoIdLength, phonePattern } from "../../../utils/constants.js"; 
 const joiSchema = joi.object({
     firstName: joi.string().optional(),
     lastName: joi.string().optional(),
-    phoneNumber: joi.string().pattern(/^\+\d{5}-\d{3}-\d{2}-\d{2}$/).optional(),
+    phoneNumber: joi.string().pattern(phonePattern).optional(),
     username: joi.string().optional(), 
     specialty: joi.array().items(joi.string()),
-    doctorId: joi.string().min(ID_LENGTH).required()
+    doctorId: joi.string().min(mongoIdLength).required()
 });
 
 const updateDoctor = async (req, res, next) => {
@@ -27,11 +27,12 @@ const updateDoctor = async (req, res, next) => {
             data
         );
         if(!updatedDoctor) throw new NotFound(`Doctor with ID ${doctorId} not found`);
-        return res.status(StatusCodes.OK).json(
-            {
-                success: true, msg: 'Doctor has been updated', updateDoctor
-            }
-        ); 
+        const response = {
+            success: true, 
+            msg: 'Doctor has been updated', 
+            updatedDoctor
+        }
+        return res.status(StatusCodes.OK).json(response); 
     }catch(err){
         return next(err); 
     }

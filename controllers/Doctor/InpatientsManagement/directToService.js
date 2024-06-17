@@ -6,10 +6,12 @@ import MedPackage from "../../../db/models/MedPackage.js";
 import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
 import Service from "../../../db/models/Service.js";
 import { BadRequest, NotFound } from "../../../customErrors/Errors.js"; 
-const MIN_ID_LENGTH = Number(process.env.MONGO_MIN_ID_LENGTH);
+import { mongoIdLength } from "../../../utils/constants.js";
+
+
 const joiSchema = joi.object({
-    serviceId: joi.string().min(MIN_ID_LENGTH).required(),
-    patientId: joi.string().min(MIN_ID_LENGTH).required() 
+    serviceId: joi.string().min(mongoIdLength).required(),
+    patientId: joi.string().min(mongoIdLength).required() 
 }); 
 
 const directToService = async(req, res, next) => {

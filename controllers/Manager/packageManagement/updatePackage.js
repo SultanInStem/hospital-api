@@ -3,11 +3,11 @@ import { StatusCodes } from "http-status-codes";
 import joi from "joi"; 
 import validateData from "../../../utils/validateData.js"; 
 import { NotFound } from "../../../customErrors/Errors.js";
-const ID_LENGTH = Number(process.env.MONGO_MIN_ID_LENGTH); 
+import { mongoIdLength } from "../../../utils/constants.js";
 const joiSchema = joi.object({
     title: joi.string().optional(),
     price: joi.number().positive().allow(0).optional(),
-    packageId: joi.string().min(ID_LENGTH).required()
+    packageId: joi.string().min(mongoIdLength).required()
 });
 
 const updatePackage = async (req, res, next) => {

@@ -8,16 +8,16 @@ import Patient from "../../../db/models/Patient.js";
 import validateData from "../../../utils/validateData.js";
 import BonusCard from "../../../db/models/BonusCard.js";
 import mongoose from "mongoose";
+import { mongoIdLength, bonusPercentage } from "../../../utils/constants.js";
 
-const bonusPercentage = Number(process.env.BONUS_PERCENTAGE);
 
 const joiSchema = joi.object({
     cardId: joi.string().optional(),
     paymentMethod: joi.string().valid('Cash','Card').required(),
     servicePrice: joi.number().min(0).required(),
     serviceTitle: joi.string().required(), 
-    patientId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(), 
-    serviceId: joi.string().min(Number(process.env.MONGO_MIN_ID_LENGTH)).required(),
+    patientId: joi.string().min(mongoIdLength).required(), 
+    serviceId: joi.string().min(mongoIdLength).required(),
     bonusDeduction: joi.number().min(0).allow(0).required()
 })
 
