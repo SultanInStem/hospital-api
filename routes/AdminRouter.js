@@ -26,10 +26,10 @@ router.post("/medicalrecords/create", createMedicalRecord);
 router.patch("/finance/refund/:id", makeRefund); 
 // ------- 
 
-router.get('/bonuscard/:id', getCard);
-router.get('/bonuscard', getAllCards);
-router.post('/bonuscard', createCard);
-router.delete('/bonuscard/:id', deleteCard);
+router.get('/bonuscards/single/:id', getCard);
+router.get('/bonuscards', getAllCards);
+router.post('/bonuscards', createCard);
+router.delete('/bonuscards/single/:id', deleteCard);
 
 
 

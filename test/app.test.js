@@ -18,7 +18,7 @@ describe('AUTH ROUTER /api/v1/auth', function(){
             const res = await request(app)
             .post('/api/v1/auth/login')
             .send({ username: 'admin@gmail.com', password: "mypass123" })
-            .expect(StatusCodes.OK)
+            .expect(StatusCodes.OK);
 
             assert(res.body.success);
             expect(res.body.success); 
@@ -30,9 +30,10 @@ describe('AUTH ROUTER /api/v1/auth', function(){
             expect(res.body).to.have.property('username');
             expect(res.body).to.have.property('role');
             auth['refreshToken'] = res.body.refreshToken; 
-            auth['accessToken'] = res.body.accessToken; 
+            auth['accessToken'] = res.body.accessToken;  
         }
-    )
+    );
+    
 
     // it('Create-manager, should return 201 CREATED', async () => {
     //     const data = {
@@ -188,4 +189,69 @@ describe('PUBLIC ROUTER, /api/v1/public', () => {
         expect(res.body).to.have.property('packages'); 
         expect(res.body.packages).to.be.an('array');
     })
+
+    it('GET /api/v1/public/payments', async function(){
+        const res = await request(app)
+        .get('/api/v1/public/payments')
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK); 
+
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('payments');
+        expect(res.body.payments).to.be.an('array');
+        testData['payment'] = res.body.payments[0]; 
+    })
+
+    it('GET /api/v1/public/payments/single/:id', async function(){
+        const res = await request(app)
+        .get('/api/v1/public/payments/single/' + testData['payment']._id)
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);
+        
+        assert(res.body.success);
+        expect(res.body).to.be.an('object'); 
+        expect(res.body).to.have.property('payment');
+    })
+
 });
+
+describe('ADMIN ROUTER /api/v1/admin', () => {
+    it('POST /api/v1/auth/login', async function(){
+        const res = await request(app)
+        .post('/api/v1/auth/login')
+        .send({username: "admin@gmail.com", password: "mypass123"})
+        .expect(StatusCodes.OK); 
+
+        assert(res.body.success);
+        expect(res.body.success); 
+        expect(res).to.be.an('object');
+
+        expect(res.body).to.have.property('accessToken');
+        expect(res.body).to.have.property('refreshToken');
+        expect(res.body).to.have.property('username');
+        expect(res.body).to.have.property('role'); 
+        auth['refreshToken'] = res.body.refreshToken; 
+        auth['accessToken'] = res.body.accessToken; 
+    });
+
+    it('GET /api/v1/admin/bonuscards', async function(){
+        const res = await request(app)
+        .get('/api/v1/admin/bonuscard')
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK); 
+
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object'); 
+        expect(res.body).to.have.property('bonusCards');
+        expect(res.body.bonusCards).to.be.an('array');
+        testData['bonusCard'] = res.body.bonusCards[0]; 
+    });
+
+    it('GET /api/v1/admin/bonusCards/single/:id', async function(){
+
+    })
+})
