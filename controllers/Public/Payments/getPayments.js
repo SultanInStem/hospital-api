@@ -76,7 +76,7 @@ const getPayments = async(req, res, next) => {
 
         const response = {
             success: true, 
-            paymentRecords
+            payments: paymentRecords
         }; 
         return res.status(StatusCodes.OK).json(response); 
     }catch(err){
