@@ -313,7 +313,8 @@ describe('ADMIN ROUTER /api/v1/admin', () => {
         expect(res.body).to.be.an('object'); 
         expect(res.body).to.have.property('deletedPatient');
     })
-    it('PATCH /api/v1/admin/patients')
+
+    
 
     // ------
 
