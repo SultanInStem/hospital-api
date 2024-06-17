@@ -15,7 +15,13 @@ const deletePatient = async(req, res, next) => {
         if(pendingRecords.length > 0) throw new BadRequest("Patient cannot be deleted since they have pending records");
         const removedPatient = await Patient.findOneAndDelete({ _id: id });
         if(!removedPatient) throw new NotFound("Patient not found");
-        return res.status(StatusCodes.OK).json({success: true, msg: "Patient has been deleted", removedPatient})
+        
+        const response = {
+            success: true, 
+            msg: "Patient has been deleted", 
+            deletedPatient: removedPatient
+        }
+        return res.status(StatusCodes.OK).json(response)
     }catch(err){
         return next(err); 
     }

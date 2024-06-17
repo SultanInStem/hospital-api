@@ -9,17 +9,17 @@ import BonusCard from "../../../db/models/BonusCard.js";
 import mongoose from "mongoose";
 import unixTimeToDays from "../../../utils/unixTimeToDays.js"; 
 import User from "../../../db/models/User.js"; 
+import { bonusPercentage, mongoIdLength } from "../../../utils/constants.js";
 
-const bonusPercentage = Number(process.env.BONUS_PERCENTAGE); 
-const MIN_ID_LENGTH = Number(process.env.MONGO_MIN_ID_LENGTH); 
+
 const joiSchema = joi.object({
-    packages: joi.array().items(joi.string().min(MIN_ID_LENGTH)).min(1).required(),
+    packages: joi.array().items(joi.string().min(mongoIdLength)).min(1).required(),
     expiresAt: joi.number().positive().required(), // unix time
-    patientId: joi.string().min(MIN_ID_LENGTH).required(),
+    patientId: joi.string().min(mongoIdLength).required(),
     cardId: joi.string().optional(),
     bonusDeduction: joi.number().positive().allow(0).required(),
     paymentMethod: joi.string().valid('Cash', 'Card').required(), 
-    PCP: joi.string().min(MIN_ID_LENGTH).optional() // id of a doctor who will supervise the patient 
+    PCP: joi.string().min(mongoIdLength).optional() // id of a doctor who will supervise the patient 
 })
 
 const activateInpatient = async (req,res, next) => {

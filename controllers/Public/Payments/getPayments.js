@@ -2,12 +2,11 @@ import Payment from "../../../db/models/Payments.js";
 import { StatusCodes } from "http-status-codes";
 import joi from "joi"; 
 import validateData from "../../../utils/validateData.js"; 
-import { NotFound } from "../../../customErrors/Errors.js";
-const ID_LENGTH = Number(process.env.MONGO_MIN_ID_LENGTH); 
+import { mongoIdLength } from "../../../utils/constants.js";
 
 const joiSchema = joi.object({
     size: joi.string().regex(/^\d+$/).optional(),
-    patientId: joi.string().min(ID_LENGTH).optional(),
+    patientId: joi.string().min(mongoIdLength).optional(),
     gte: joi.string().regex(/^\d+$/).optional(),
     lte: joi.string().regex(/^\d*\.?\d+/).optional(),
     skip: joi.string().regex(/^\d+$/).optional(),

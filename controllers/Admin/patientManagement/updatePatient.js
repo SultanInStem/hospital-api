@@ -5,15 +5,15 @@ import { StatusCodes } from "http-status-codes";
 import { BadRequest, NotFound } from "../../../customErrors/Errors.js";
 import getPatientId from "../../../utils/getPatientId.js";
 import User from "../../../db/models/User.js"; 
-const MIN_ID_LENGTH = Number(process.env.MONGO_MIN_ID_LENGTH); 
+import { mongoIdLength, phonePattern } from "../../../utils/constants.js";
 const joiSchema = joi.object({
-    phoneNumber: joi.string().pattern(/^\+\d{5}-\d{3}-\d{2}-\d{2}$/).optional(),
+    phoneNumber: joi.string().pattern(phonePattern).optional(),
     dateOfBirth: joi.date().optional(), 
-    PCP: joi.string().min(MIN_ID_LENGTH).optional(),
+    PCP: joi.string().min(mongoIdLength).optional(),
     firstName: joi.string().optional(), 
     lastName: joi.string().optional(),
     gender: joi.string().valid('Male', 'Female').optional(),
-    patientId: joi.string().min(MIN_ID_LENGTH).required()
+    patientId: joi.string().min(mongoIdLength).required()
 })
 
 const updatePatient = async (req, res, next) => {

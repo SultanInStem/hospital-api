@@ -3,11 +3,11 @@ import MedPackage from "../../../db/models/MedPackage.js";
 import validateData from "../../../utils/validateData.js";
 import { NotFound } from "../../../customErrors/Errors.js";
 import joi from "joi"; 
-const ID_LENGTH = Number(process.env.MONGO_MIN_ID_LENGTH); 
+import { mongoIdLength } from "../../../utils/constants.js"; 
 
 const joiSchema = joi.object({
     serviceId: joi.string().required(), 
-    packageId: joi.string().min(ID_LENGTH).required()
+    packageId: joi.string().min(mongoIdLength).required()
 }); 
 
 const addPkgService = async(req, res, next) => {

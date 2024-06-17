@@ -3,7 +3,6 @@ import { StatusCodes } from "http-status-codes";
 import { expect } from "chai";
 import request from "supertest";
 import app from "../app.js";
-
 let server; 
 const auth = {}; 
 const testData = {};
@@ -286,4 +285,36 @@ describe('ADMIN ROUTER /api/v1/admin', () => {
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('bonusCard');
     })
+
+
+    // PATIENTS 
+    it('POST /api/v1/admin/patients', async function(){
+        const res = await request(app)
+        .post('/api/v1/admin/patients/create')
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .send({ firstName: "Mike TYSON101", lastName: "Machine", phoneNumber: "+99890-131-12-05"})
+        .expect(StatusCodes.CREATED);
+
+        assert(res.body.success);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property('patient');
+        testData['patient'] = res.body.patient; 
+    })
+
+    it('DELETE /api/v1/admin/patients/single/:id', async function(){
+        const res = await request(app)
+        .delete('/api/v1/admin/patients/single/' + testData['patient']._id)
+        .set('Authorization', 'Bearer ' + auth['accessToken'])
+        .set('Content-Type', 'application/json')
+        .expect(StatusCodes.OK);
+
+        assert(res.body.success); 
+        expect(res.body).to.be.an('object'); 
+        expect(res.body).to.have.property('deletedPatient');
+    })
+    it('PATCH /api/v1/admin/patients')
+
+    // ------
+
 })
