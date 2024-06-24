@@ -6,7 +6,10 @@ import ipRecords from "./access-records/ipRecords.js";
 import Auth from "./middleware/Auth.js";
 import AuthAdmin from "./middleware/AuthAdmin.js";
 import AuthManager from "./middleware/AuthManager.js";
+
+
 // SECURITY PACKAGES 
+import rateLimit from "express-rate-limit";
 import cors from "cors";
 import mongo_sanitize from "express-mongo-sanitize"; 
 import helmet from "helmet";
@@ -24,13 +27,21 @@ import AuthRouter from "./routes/AuthRouter.js";
 import PublicRouter from "./routes/PublicRouter.js"; 
 import ManagerRouter from "./routes/ManagerRouter.js";
 //--------
+
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    limit: 100
+});
 app.use(express.json());
 app.use(cors({
-    origin: "*"
+    origin: "*", 
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));  
 app.use(mongo_sanitize());
 app.use(helmet());  
 app.disable('x-powered-by');
+app.use(limiter);
 
 const start = async () => {
     try{
