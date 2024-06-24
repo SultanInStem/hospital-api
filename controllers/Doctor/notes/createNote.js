@@ -31,7 +31,6 @@ const createNote = async(req, res, next) => {
             createdAt: currentTime, 
             writtenBy: doctor._id
         });
-
         return res.status(StatusCodes.OK).json({success: true, note});
     }catch(err){
         return next(err); 
