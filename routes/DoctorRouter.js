@@ -1,16 +1,20 @@
 import express from "express"; 
 const router = express.Router();
-import makeNote from "../controllers/Doctor/PatientsNotes/makeNote.js";
-import deleteNote from "../controllers/Doctor/PatientsNotes/deleteNote.js";
 import getPatientsQueue from "../controllers/Doctor/queueFunctionality/getPatientsQueue.js";
 import completeRecord from "../controllers/Doctor/medicalRecords/completeRecord.js";
 import redirectForRefund from "../controllers/Doctor/medicalRecords/redirectForRefund.js";
 import directToService from "../controllers/Doctor/InpatientsManagement/directToService.js";
 import getDocsPatients from "../controllers/Doctor/allPatientsManagement/getDocsPatients.js";
+import getAllNotes from "../controllers/Doctor/notes/getAllNotes.js";
+import createNote from "../controllers/Doctor/notes/createNote.js";
+import getDocsNotes from "../controllers/Doctor/notes/getDocsNotes.js";
+import deleteNote from "../controllers/Doctor/notes/deleteNote.js";
 
 // NOTES 
-router.post('/note/create', makeNote); 
-router.delete('/note/:id', deleteNote);
+router.get('/notes/all', getAllNotes);
+router.get('/notes/specific', getDocsNotes); 
+router.post('/notes/create', createNote); 
+router.delete('/notes/single/:id', deleteNote);
 
 
 // All-Patients 
