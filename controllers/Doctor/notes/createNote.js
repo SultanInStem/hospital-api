@@ -28,7 +28,8 @@ const createNote = async(req, res, next) => {
             docsFirstName: doctor.firstName, 
             docsLastName: doctor.lastName, 
             docsSpecialty: doctor.specialty, 
-            createdAt: currentTime
+            createdAt: currentTime, 
+            writtenBy: doctor._id
         });
 
         return res.status(StatusCodes.OK).json({success: true, note});

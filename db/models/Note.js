@@ -17,6 +17,10 @@ const NoteSchema = new mongoose.Schema({
         type: String, 
         required: true
     },
+    writtenBy: {
+        type: mongoose.Types.ObjectId, 
+        required: true
+    },
     docsSpecialty: {
         type: Array, 
         requried: true
