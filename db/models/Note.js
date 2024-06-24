@@ -5,6 +5,10 @@ const NoteSchema = new mongoose.Schema({
         type: String, 
         requried: true
     },
+    patientId: {
+        type: mongoose.Types.ObjectId, 
+        requried: true
+    },
     docsFirstName: {
         type: String,
         required: true
