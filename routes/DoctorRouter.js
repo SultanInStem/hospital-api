@@ -7,6 +7,7 @@ import completeRecord from "../controllers/Doctor/medicalRecords/completeRecord.
 import redirectForRefund from "../controllers/Doctor/medicalRecords/redirectForRefund.js";
 import directToService from "../controllers/Doctor/InpatientsManagement/directToService.js";
 import getDocsPatients from "../controllers/Doctor/allPatientsManagement/getDocsPatients.js";
+import getDoctorsPatients from "../controllers/Doctor/InpatientsManagement/getDocsPatients.js";
 
 // NOTES 
 router.post('/note/create', makeNote); 
@@ -22,6 +23,13 @@ router.get("/patients", getDocsPatients); // get patients that are supervised by
 // Med Records 
 router.patch("/medicalrecords/complete/:id", completeRecord); // complete med-record
 router.patch("/medicalrecords/refund/:id", redirectForRefund); // redirect for a refund 
-router.post("/medicalrecords/create", directToService); // create med-record for the inpatient 
+// router.post("/medicalrecords/create", directToService); // create med-record for the inpatient 
+//
+
+
+// Inpatients  
+router.post("/inpatients/medicalrecords/create", directToService); // creates a med-record for the inpatient 
+router.get("/inpatient", getDoctorsPatients); 
+
 //
 export default router; 
