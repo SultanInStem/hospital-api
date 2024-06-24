@@ -30,6 +30,10 @@ const PatientSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
+    complaints: {
+        type: Array, 
+        default: []
+    },
     expiresAt: {
         type: Number,
         default: 0

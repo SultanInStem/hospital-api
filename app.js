@@ -78,7 +78,8 @@ start();
 
 app.get('/', (req, res) => {
     return res.status(200).send("<h1>Server is live!</h1>")
-})
+});
+
 app.use("/api/v1/manager", AuthManager, ManagerRouter); 
 app.use("/api/v1/admin", AuthAdmin, AdminRouter);
 app.use("/api/v1/doctor", Auth, DoctorRouter); 

@@ -12,6 +12,7 @@ import getDoctors from "../controllers/Public/Doctors/getDoctors.js";
 import getPayments from "../controllers/Public/Payments/getPayments.js";
 import getSinglePayment from "../controllers/Public/Payments/getSinglePayment.js";
 const router = express.Router(); 
+
 // Patients 
 router.get('/patients', getAllPatients);
 router.get("/patients/search", searchPatients);
