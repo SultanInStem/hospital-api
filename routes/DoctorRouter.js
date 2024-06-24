@@ -11,8 +11,8 @@ import getDocsNotes from "../controllers/Doctor/notes/getDocsNotes.js";
 import deleteNote from "../controllers/Doctor/notes/deleteNote.js";
 
 // NOTES 
-router.get('/notes/all', getAllNotes);
-router.get('/notes/specific', getDocsNotes); 
+router.get('/notes/all/:id', getAllNotes);
+router.get('/notes/specific/:id', getDocsNotes); 
 router.post('/notes/create', createNote); 
 router.delete('/notes/single/:id', deleteNote);
 

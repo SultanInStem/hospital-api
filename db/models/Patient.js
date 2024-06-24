@@ -26,13 +26,8 @@ const PatientSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
-    notes: {
-        type: Array,
-        default: []
-    },
     complaints: {
-        type: Array, 
-        default: []
+        type: String
     },
     expiresAt: {
         type: Number,
