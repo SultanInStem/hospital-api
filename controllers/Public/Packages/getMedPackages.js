@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
-import MedPackage from "../../db/models/MedPackage.js";
+import MedPackage from "../../../db/models/MedPackage.js";
 import joi from "joi";
-import validateData from "../../utils/validateData.js";
+import validateData from "../../../utils/validateData.js";
 const joiSchema = joi.object({
     price: joi.number().positive().optional(),
     size: joi.number().min(0).allow(-1).required()

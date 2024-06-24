@@ -7,7 +7,6 @@ import completeRecord from "../controllers/Doctor/medicalRecords/completeRecord.
 import redirectForRefund from "../controllers/Doctor/medicalRecords/redirectForRefund.js";
 import directToService from "../controllers/Doctor/InpatientsManagement/directToService.js";
 import getDocsPatients from "../controllers/Doctor/allPatientsManagement/getDocsPatients.js";
-import getDocsPatients from "../controllers/Doctor/allPatientsManagement/getDocsPatients.js";
 
 // NOTES 
 router.post('/note/create', makeNote); 
