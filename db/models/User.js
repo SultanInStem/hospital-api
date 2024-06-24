@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import { phonePattern } from "../../utils/constants.js";
 
 
 const UserSchema = new mongoose.Schema({
@@ -44,7 +45,8 @@ const UserSchema = new mongoose.Schema({
     },
     phoneNumber: {
         type: String,
-        required: true
+        required: true,
+        match: phonePattern
     },
     isActive: {
         type: Boolean,
