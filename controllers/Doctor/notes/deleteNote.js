@@ -6,9 +6,9 @@ const deleteNote = async(req, res, next) => {
     try{
         const { id } = req.params;
         const docsId = req.userId; 
-        const note = await Note.findById(id); 
+        const note = await Note.findById(id);
         if(!note) throw new NotFound(`Note with ID ${id} not found`);
-        else if(note.writtenBy !== docsId) throw new Unauthorized("This note is not yours to delete!");
+        else if(note.writtenBy != docsId) throw new Unauthorized("This note is not yours to delete!");
         await Note.deleteOne({_id: id}); 
         return res.status(StatusCodes.GONE).json({success: true});
     }catch(err){
