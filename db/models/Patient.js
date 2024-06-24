@@ -28,6 +28,9 @@ const PatientSchema = new mongoose.Schema({
     },
     complaints: {
         type: String
+    }, 
+    mainDiagnosis: {
+        type: String
     },
     expiresAt: {
         type: Number,
