@@ -1,7 +1,6 @@
 import ErrorHandler from "../errorHandlers/ErrorHandler.js"; 
 import Patient from "../db/models/Patient.js";
-import { BadRequest, Unauthorized } from "../customErrors/Errors";
-import NotFound from "../errorHandlers/NotFound";
+import {NotFound, BadRequest, Unauthorized} from "../customErrors/Errors.js"
 
 const VerifyPCP = async (req, res, next) => {
     try{
