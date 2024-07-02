@@ -3,7 +3,6 @@ import { StatusCodes } from "http-status-codes";
 import joi from "joi"; 
 import validateData from "../../../utils/validateData.js";
 import { mongoIdLength } from "../../../utils/constants.js";
-import { NotFound, Unauthorized } from "../../../customErrors/Errors.js";
 
 const joiSchema = joi.object({
     medicalHistory: joi.string().max(200).required(), 
