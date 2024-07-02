@@ -1,7 +1,9 @@
-import Patient from "../../../db/models/Patient.js"; 
-import User from "../../../db/models/User.js"; 
+import Patient from "../../../db/models/Patient.js";
+import User from "../../../db/models/User.js";
+import { NotFound } from "../../../customErrors/Errors.js";
 import { StatusCodes } from "http-status-codes";
-import { NotFound } from "../../../customErrors/Errors.js"; 
+
+
 const getDocsPatients = async(req, res, next) => {
     try{
         const docId = req.userId; 
