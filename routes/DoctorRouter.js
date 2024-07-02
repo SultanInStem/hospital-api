@@ -5,11 +5,11 @@ import getPatientsQueue from "../controllers/Doctor/queueFunctionality/getPatien
 import completeRecord from "../controllers/Doctor/medicalRecords/completeRecord.js";
 import redirectForRefund from "../controllers/Doctor/medicalRecords/redirectForRefund.js";
 import directToService from "../controllers/Doctor/InpatientsManagement/directToService.js";
-import getDocsPatients from "../controllers/Doctor/allPatientsManagement/getDocsPatients.js";
 import getAllNotes from "../controllers/Doctor/notes/getAllNotes.js";
 import createNote from "../controllers/Doctor/notes/createNote.js";
 import getDocsNotes from "../controllers/Doctor/notes/getDocsNotes.js";
 import deleteNote from "../controllers/Doctor/notes/deleteNote.js";
+import getDocsPatients from "../controllers/Doctor/PCP_Actions/getDocsPatients.js";
 import updateCurrentCondition from "../controllers/Doctor/PCP_Actions/updateCurrentCondition.js";
 import updateMedicalHistory from "../controllers/Doctor/PCP_Actions/updateMedicalHistory.js";
 import updateNeuroCondition from "../controllers/Doctor/PCP_Actions/updateNeuroCondition.js";
@@ -26,15 +26,11 @@ router.delete('/notes/single/:id', deleteNote);
 
 // All-Patients 
 router.get("/patients/queue", getPatientsQueue); 
-router.get("/patients", getDocsPatients); // get patients that are supervised by a certain doctor 
 //
-
 
 // Med Records 
 router.patch("/medicalrecords/complete/:id", completeRecord); // complete med-record
 router.patch("/medicalrecords/refund/:id", redirectForRefund); // redirect for a refund 
-// router.post("/medicalrecords/create", directToService); // create med-record for the inpatient 
-//
 
 
 // Inpatients  
@@ -43,6 +39,7 @@ router.post("/inpatients/medicalrecords/create", directToService); // creates a 
 
 
 // PCP ACTIONS 
+router.get("/patients/pcp", getDocsPatients);
 router.patch("/patients/pcp/condition", VerifyPCP, updateCurrentCondition);
 router.patch("/patients/pcp/localis", VerifyPCP, updateStatusLocalis);
 router.patch("/patients/pcp/neurocondition", VerifyPCP, updateNeuroCondition);
