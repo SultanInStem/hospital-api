@@ -1,5 +1,6 @@
 import express from "express"; 
 const router = express.Router();
+import VerifyPCP from "../middleware/VerifyPCP.js";
 import getPatientsQueue from "../controllers/Doctor/queueFunctionality/getPatientsQueue.js";
 import completeRecord from "../controllers/Doctor/medicalRecords/completeRecord.js";
 import redirectForRefund from "../controllers/Doctor/medicalRecords/redirectForRefund.js";
@@ -9,6 +10,7 @@ import getAllNotes from "../controllers/Doctor/notes/getAllNotes.js";
 import createNote from "../controllers/Doctor/notes/createNote.js";
 import getDocsNotes from "../controllers/Doctor/notes/getDocsNotes.js";
 import deleteNote from "../controllers/Doctor/notes/deleteNote.js";
+import updateCurrentCondition from "../controllers/Doctor/PCP_Actions/updateCurrentCondition.js";
 
 // NOTES 
 router.get('/notes/all/:id', getAllNotes);
@@ -32,5 +34,10 @@ router.patch("/medicalrecords/refund/:id", redirectForRefund); // redirect for a
 
 // Inpatients  
 router.post("/inpatients/medicalrecords/create", directToService); // creates a med-record for the inpatient 
+//
+
+
+// PCP ACTIONS 
+router.post("/patients/pcp/condition", VerifyPCP, updateCurrentCondition);
 //
 export default router; 
