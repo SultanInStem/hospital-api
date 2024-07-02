@@ -3,8 +3,6 @@ import Patient from "../../../db/models/Patient.js";
 import joi from "joi"; 
 import validateData from "../../../utils/validateData.js";
 import { mongoIdLength } from "../../../utils/constants.js";
-import NotFound from "../../../errorHandlers/NotFound.js";
-import { Unauthorized } from "../../../customErrors/Errors.js";
 const joiSchema = joi.object({
     diagnosis: joi.string().max(200).required(),
     patientId: joi.string().min(mongoIdLength).required() 
