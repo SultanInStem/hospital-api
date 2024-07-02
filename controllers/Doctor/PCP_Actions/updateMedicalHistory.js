@@ -13,13 +13,8 @@ const joiSchema = joi.object({
 
 const updateMedicalHistory = async (req, res, next) => {
     try{
-        const docId = req.userId; 
         const { patientId, medicalHistory } = await validateData(joiSchema, req.body);
-        const patient = await Patient.findById(patientId, { PCP: 1 }); 
-        if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`);
-        else if(patient.PCP != docId) throw new Unauthorized("You are not authorized to update this field");
         await Patient.findByIdAndUpdate(patientId, { $set: { medicalHistory: medicalHistory } }, { projection: {medicalHistory: 1} });
-
         return res.status(StatusCodes.OK).json({success: true, newMedicalHistory: medicalHistory});
     }catch(err){
         return next(err); 

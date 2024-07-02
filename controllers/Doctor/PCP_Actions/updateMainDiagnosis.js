@@ -12,11 +12,7 @@ const joiSchema = joi.object({
 
 const updateMainDiagnosis = async (req, res, next) => {
     try{
-        const docId = req.userId; 
         const { patientId, diagnosis } = await validateData(joiSchema, req.body); 
-        const patient = await Patient.findById(patientId);
-        if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`);
-        else if(patient.PCP != docId) throw new Unauthorized(`You are not allowed to update this field. Please refer to PCP`);
         await Patient.findByIdAndUpdate(patientId, {$set: { mainDiagnosis: diagnosis }});
         return res.status(StatusCodes.OK).json({success: true, newDiagnosis: diagnosis}); 
     }catch(err){
