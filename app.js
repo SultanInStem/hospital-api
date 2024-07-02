@@ -48,24 +48,17 @@ const start = async () => {
         await connect(process.env.MONGO_URL);
         app.listen(PORT, () => {
             console.log('server is running'); 
-
             const ipAddressIntervalId = setInterval(() => {
                 ipRecords.clear();
             }, 3600000); 
-
-            const dbCleanupIntervalId = setInterval(() => {
-                console.log("this function runs once a day");
-            }, 1000 * 60 * 60 * 24);
             process.on("SIGINT", () => {
                 console.log("Server is shutting down...");
                 clearInterval(ipAddressIntervalId);
-                clearInterval(dbCleanupIntervalId);
                 process.exit();
             }); 
             process.on("SIGTERM", () => {
                 console.log("Server is shutting down...");
                 clearInterval(ipAddressIntervalId);
-                clearInterval(dbCleanupIntervalId); 
                 process.exit(); 
             }); 
         });  
