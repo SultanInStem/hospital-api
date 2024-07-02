@@ -26,12 +26,6 @@ const PatientSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
-    complaints: {
-        type: String
-    }, 
-    mainDiagnosis: {
-        type: String
-    },
     expiresAt: {
         type: Number,
         default: 0
@@ -46,6 +40,27 @@ const PatientSchema = new mongoose.Schema({
     lastSeen: {
         type: Number, 
         required: true
+    }, 
+    mainDiagnosis: {
+        type: String
+    }, 
+    complaints: {
+        type: String
+    }, 
+    epidemicHistory: {
+        type: String
+    }, 
+    currentCondition: {
+        type: String
+    }, 
+    neuroCondition: {
+        type: String
+    }, 
+    medicalHistory: {
+        type: String
+    }, 
+    statusLocalis: {
+        type: String
     }
 }, {timestamps: true})
 
