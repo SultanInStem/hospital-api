@@ -19,7 +19,7 @@ const PatientSchema = new mongoose.Schema({
         match: phonePattern,
     },
     dateOfBirth: {
-        type: Date
+        type: String, 
     },
     uniqueId: {
         type: String,
