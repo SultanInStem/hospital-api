@@ -61,6 +61,7 @@ const activateInpatient = async (req,res, next) => {
 
         if(!patient.dateOfBirth && data.dateOfBirth) patient.set({ dateOfBirth: data.dateOfBirth });
         if(!patient.gender && data.gender) patient.set({gender: data.gender});
+        
         patient.set({ packages: packages, expiresAt: expiresAt }); 
         await patient.save({session}); 
         // ---- 
