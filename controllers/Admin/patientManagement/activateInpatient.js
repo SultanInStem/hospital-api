@@ -19,7 +19,9 @@ const joiSchema = joi.object({
     cardId: joi.string().optional(),
     bonusDeduction: joi.number().positive().allow(0).required(),
     paymentMethod: joi.string().valid('Cash', 'Card').required(), 
-    PCP: joi.string().min(mongoIdLength).optional() // id of a doctor who will supervise the patient 
+    PCP: joi.string().min(mongoIdLength).optional(), // id of a doctor who will supervise the patient 
+    dateOfBirth: joi.string().optional(), 
+    gender: joi.string().valid('Male', 'Female').optional()
 })
 
 const activateInpatient = async (req,res, next) => {
