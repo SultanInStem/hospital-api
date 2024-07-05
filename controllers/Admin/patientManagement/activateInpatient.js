@@ -47,6 +47,10 @@ const activateInpatient = async (req,res, next) => {
         // validate patient 
         const patient = await Patient.findById(patientId); 
         if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`);
+        else if(!patient.dateOfBirth) throw new BadRequest("Please provide date of birth"); 
+        else if(!patient.gender) throw new BadRequest("Please provide a gender");
+
+
         if(PCP){
             const doc = await User.findById(PCP);
             if(!doc || doc.role !== 'Doctor') throw new NotFound(`Primary care physician (PCP) with ID ${PCP} is not found`);  
@@ -54,6 +58,9 @@ const activateInpatient = async (req,res, next) => {
         }else{
             if(!patient.PCP) throw new BadRequest("Patient does not have a supervising docotor. Please provide PCP"); 
         }
+
+        if(!patient.dateOfBirth && data.dateOfBirth) patient.set({ dateOfBirth: data.dateOfBirth });
+        if(!patient.gender && data.gender) patient.set({gender: data.gender});
         patient.set({ packages: packages, expiresAt: expiresAt }); 
         await patient.save({session}); 
         // ---- 
