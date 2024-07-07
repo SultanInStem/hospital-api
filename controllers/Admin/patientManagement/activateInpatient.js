@@ -47,8 +47,8 @@ const activateInpatient = async (req,res, next) => {
         // validate patient 
         const patient = await Patient.findById(patientId); 
         if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`);
-        else if(!patient.dateOfBirth) throw new BadRequest("Please provide date of birth"); 
-        else if(!patient.gender) throw new BadRequest("Please provide a gender");
+        else if(!patient.dateOfBirth && !data.dateOfBirth) throw new BadRequest("Please provide date of birth"); 
+        else if(!patient.gender && !data.gender) throw new BadRequest("Please provide a gender");
 
 
         if(PCP){
