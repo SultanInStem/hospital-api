@@ -72,7 +72,6 @@ const activateInpatient = async (req,res, next) => {
             if(!medPackage) throw new NotFound(`Package with ID ${id} not found`); 
             netPrice += (medPackage.price * treatmentDurationDays); 
         }
-        if(netPrice < bonusDeduction) throw new BadRequest("Bonus deduction cannot exceed the net price");
         if(cardId){  // if cardId is prvided, calculate adjustment and update the balance
             const adjustment = netPrice * bonusPercentage;
             const bonusCard = await BonusCard.findByIdAndUpdate(cardId, 
