@@ -17,7 +17,6 @@ const joiSchema = joi.object({
     expiresAt: joi.number().positive().required(), // unix time
     patientId: joi.string().min(mongoIdLength).required(),
     cardId: joi.string().optional(),
-    bonusDeduction: joi.number().positive().allow(0).required(),
     paymentMethod: joi.string().valid('Cash', 'Card').required(), 
     PCP: joi.string().min(mongoIdLength).optional(), // id of a doctor who will supervise the patient 
     dateOfBirth: joi.string().optional(), 
@@ -32,7 +31,6 @@ const activateInpatient = async (req,res, next) => {
     try{
         const data = await validateData(joiSchema, req.body);
         const { 
-            bonusDeduction, 
             cardId,
             patientId,
             paymentMethod,
@@ -76,20 +74,18 @@ const activateInpatient = async (req,res, next) => {
         }
         if(netPrice < bonusDeduction) throw new BadRequest("Bonus deduction cannot exceed the net price");
         if(cardId){  // if cardId is prvided, calculate adjustment and update the balance
-            const adjustment = -bonusDeduction + (netPrice - bonusDeduction) * bonusPercentage;
+            const adjustment = netPrice * bonusPercentage;
             const bonusCard = await BonusCard.findByIdAndUpdate(cardId, 
                 { $inc: { balance: adjustment } }, 
                 { new: false, session }
             );
             if(!bonusCard) throw new NotFound(`Bonus card with ID ${cardId} not found`);
-            else if(bonusDeduction > bonusCard.balance) throw new BadRequest("Bonus card does not have sufficient funds");
         }
 
         const paymentData = {
             paymentMethod,
             patientId,
             amountBeforeDeduction: netPrice,
-            bonusDeduction,
             amountFinal: netPrice - bonusDeduction,
             packagesPaid: packages, 
             createdAt: currentUnix
