@@ -6,15 +6,15 @@ import { mongoIdLength } from "../../../utils/constants.js";
 
 
 const joiSchema = joi.object({
-    complaints: joi.string().max(200).required(), 
-    patientId: joi.string().min(mongoIdLength).required()
+    patientId: joi.string().min(mongoIdLength).required(),
+    newText: joi.string().max(200).required()
 })
 
 const updateComplaints = async (req, res, next) => {
     try{
-        const { patientId, complaints } = await validateData(joiSchema, req.body); 
-        await Patient.findByIdAndUpdate(patientId, { $set: { complaints: complaints } }, { projection: { complaints: 1 }});
-        return res.status(StatusCodes.OK).json({success: true, newComplaints: complaints});
+        const { patientId, newText } = await validateData(joiSchema, req.body); 
+        await Patient.findByIdAndUpdate(patientId, { $set: { complaints: newText } }, { projection: { complaints: 1 }});
+        return res.status(StatusCodes.OK).json({success: true, current: newText});
     }catch(err){
         return next(err); 
     }
