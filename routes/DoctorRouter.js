@@ -10,6 +10,7 @@ import createNote from "../controllers/Doctor/notes/createNote.js";
 import getDocsNotes from "../controllers/Doctor/notes/getDocsNotes.js";
 import deleteNote from "../controllers/Doctor/notes/deleteNote.js";
 import getDocsPatients from "../controllers/Doctor/PCP_Actions/getDocsPatients.js";
+import getCurrentField from "../controllers/Doctor/PCP_Actions/getCurrentField.js";
 import updateCurrentCondition from "../controllers/Doctor/PCP_Actions/updateCurrentCondition.js";
 import updateMedicalHistory from "../controllers/Doctor/PCP_Actions/updateMedicalHistory.js";
 import updateNeuroCondition from "../controllers/Doctor/PCP_Actions/updateNeuroCondition.js";
@@ -40,6 +41,7 @@ router.post("/inpatients/medicalrecords/create", directToService); // creates a 
 
 // PCP ACTIONS 
 router.get("/patients/pcp", getDocsPatients);
+router.get("/patients/pcp/:field/:patientId", getCurrentField);
 router.patch("/patients/pcp/condition", VerifyPCP, updateCurrentCondition);
 router.patch("/patients/pcp/localis", VerifyPCP, updateStatusLocalis);
 router.patch("/patients/pcp/neurocondition", VerifyPCP, updateNeuroCondition);
@@ -47,7 +49,6 @@ router.patch("/patients/pcp/history", VerifyPCP, updateMedicalHistory);
 router.patch("/patients/pcp/epidemichistory", VerifyPCP, updateEpidemicHistory);
 router.patch("/patients/pcp/complaints", VerifyPCP, updateComplaints);
 router.patch("/patients/pcp/diagnosis", VerifyPCP, updateMainDiagnosis);
-
 
 
 //

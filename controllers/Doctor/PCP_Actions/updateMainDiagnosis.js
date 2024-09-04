@@ -3,16 +3,17 @@ import Patient from "../../../db/models/Patient.js";
 import joi from "joi"; 
 import validateData from "../../../utils/validateData.js";
 import { mongoIdLength } from "../../../utils/constants.js";
+
 const joiSchema = joi.object({
-    diagnosis: joi.string().max(200).required(),
-    patientId: joi.string().min(mongoIdLength).required() 
+    patientId: joi.string().min(mongoIdLength).required(),
+    newText: joi.string().max(200).required()
 });
 
 const updateMainDiagnosis = async (req, res, next) => {
     try{
-        const { patientId, diagnosis } = await validateData(joiSchema, req.body); 
-        await Patient.findByIdAndUpdate(patientId, {$set: { mainDiagnosis: diagnosis }});
-        return res.status(StatusCodes.OK).json({success: true, newDiagnosis: diagnosis}); 
+        const { patientId, newText } = await validateData(joiSchema, req.body); 
+        await Patient.findByIdAndUpdate(patientId, {$set: { mainDiagnosis: newText }});
+        return res.status(StatusCodes.OK).json({success: true, current: newText}); 
     }catch(err){
         return next(err); 
     }

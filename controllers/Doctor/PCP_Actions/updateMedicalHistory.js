@@ -5,16 +5,16 @@ import validateData from "../../../utils/validateData.js";
 import { mongoIdLength } from "../../../utils/constants.js";
 
 const joiSchema = joi.object({
-    medicalHistory: joi.string().max(200).required(), 
-    patientId: joi.string().min(mongoIdLength).required()
+    patientId: joi.string().min(mongoIdLength).required(),
+    newText: joi.string().max(200).required()
 });
 
 
 const updateMedicalHistory = async (req, res, next) => {
     try{
-        const { patientId, medicalHistory } = await validateData(joiSchema, req.body);
-        await Patient.findByIdAndUpdate(patientId, { $set: { medicalHistory: medicalHistory } }, { projection: {medicalHistory: 1} });
-        return res.status(StatusCodes.OK).json({success: true, newMedicalHistory: medicalHistory});
+        const { patientId, newText } = await validateData(joiSchema, req.body);
+        await Patient.findByIdAndUpdate(patientId, { $set: { medicalHistory: newText } }, { projection: {medicalHistory: 1} });
+        return res.status(StatusCodes.OK).json({success: true, current: newText});
     }catch(err){
         return next(err); 
     }
