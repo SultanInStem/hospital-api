@@ -7,7 +7,7 @@ import PatientMedicalRecord from "../../../db/models/PatientMedicalRecords.js";
 import Service from "../../../db/models/Service.js";
 import { BadRequest, NotFound } from "../../../customErrors/Errors.js"; 
 import { mongoIdLength } from "../../../utils/constants.js";
-
+import mongoose from "mongoose";
 
 const joiSchema = joi.object({
     serviceId: joi.string().min(mongoIdLength).required(),
@@ -15,6 +15,9 @@ const joiSchema = joi.object({
 }); 
 
 const directToService = async(req, res, next) => {
+    let isTransactionFailed = false; 
+    const session = await mongoose.startSession();
+    session.startTransaction(); 
     try{
         const docId = req.userId; 
         const data = await validateData(joiSchema, req.body); 
@@ -31,25 +34,18 @@ const directToService = async(req, res, next) => {
             throw new BadRequest("Patient's time as a static patient has expired");
         }else if(!patient.PCP){ // check if PCP is specified
             throw new BadRequest("Primary doctor is not specified. Please refer to admins."); 
-        }else if(patient.PCP !== docId){ // check if the doctor is indeed PCP
+        }else if(patient.PCP != docId){ // check if the doctor is indeed PCP
             throw new BadRequest(`Only doctor with ID ${patient.PCP} is allowed to manage this patient`);  
         }
-        
-        // check if service even exists 
-        const service = await Service.findById(
-            serviceId, 
-            {createdAt: 0, updatedAt: 0, currentQueue: 0, providedBy: 0, price: 0}
-        ); 
-        if(!service) throw new BadRequest(`Service with ID ${serviceId} not found`); 
-        //---
-
 
         // check if the serviceId is allowed by the packages 
         const patientPackages = patient.packages; 
         let isAllowed = false; 
+        
         for(let i = 0; i < patientPackages.length; i++){
             const pkgId = patientPackages[i]; 
             const pkg = await MedPackage.findById(pkgId); 
+
             if(pkg.servicesAllowed.includes(serviceId)){
                 isAllowed = true; 
                 break; 
@@ -58,8 +54,16 @@ const directToService = async(req, res, next) => {
         if(!isAllowed) throw new BadRequest("Patient is not allowed to use this service since it is not specified in packages!");
         //---
 
-        // create medical record 
+        // -- DANGER ZONE--
+        // check if service even exists 
+        const service = await Service.findById(
+            serviceId, 
+            {createdAt: 0, updatedAt: 0, currentQueue: 0, providedBy: 0, price: 0}
+        ); 
+        if(!service) throw new BadRequest(`Service with ID ${serviceId} not found`); 
+        //---
 
+        // create medical record 
         const medRecordData = {
             isInpatient: true,
             serviceId: service._id, 
@@ -68,14 +72,8 @@ const directToService = async(req, res, next) => {
             patientFirstName: patient.firstName, 
             patientLastName: patient.lastName,
             status: 'queue',
-            createdAt: currentTime
-        }
-        if(service.currentQueue.length === 0){
-            medRecordData['queueNum'] = 1; 
-        }else{
-            const lastRecordId = service.currentQueue[service.currentQueue.length - 1]; 
-            const lastRecord = await PatientMedicalRecord.findById(lastRecordId);
-            medRecordData['queueNum'] = lastRecord.queueNum + 1; 
+            createdAt: currentTime,
+            queueNum: 1
         }
 
         const medRecord = await PatientMedicalRecord.create(medRecordData);
@@ -86,10 +84,20 @@ const directToService = async(req, res, next) => {
         const updatedService = await Service.findByIdAndUpdate(
             serviceId, 
             { $push: { currentQueue: medRecord._id } }, 
-            { projection: {createdAt: 0, providedBy: 0, title: 0, price: 0 }}
+            { session, projection: {createdAt: 0, providedBy: 0, title: 0, price: 0 }}
         );
-        //---
 
+        if(updatedService.currentQueue.length === 0){
+            medRecord.set({queueNum: 1}); 
+        }else{
+            const lastRecordId = updatedService.currentQueue[updatedService.currentQueue.length - 1]; 
+            const lastRecord = await PatientMedicalRecord.findById(lastRecordId);
+            medRecord.set({queueNum: lastRecord.queueNum + 1 });
+        }
+        
+        await medRecord.save({session});
+        await session.commitTransaction(); 
+        //---
 
         const response = { 
             success: true,
@@ -98,7 +106,13 @@ const directToService = async(req, res, next) => {
         }; 
         return res.status(StatusCodes.OK).json(response); 
     }catch(err){
+        isTransactionFailed = true;
         return next(err); 
+    } finally{
+        if(isTransactionFailed){
+            await session.abortTransaction(); 
+        }
+        await session.endSession();
     }
 }
 export default directToService; 

@@ -3,35 +3,31 @@ import Patient from "../../../db/models/Patient.js";
 import MedPackage from "../../../db/models/MedPackage.js"; 
 import { StatusCodes } from "http-status-codes";
 import joi from "joi"; 
-import { BadRequest, NotFound, ServerError } from "../../../customErrors/Errors.js";
+import { BadRequest, NotFound } from "../../../customErrors/Errors.js";
 import validateData from "../../../utils/validateData.js";
-import BonusCard from "../../../db/models/BonusCard.js";
 import mongoose from "mongoose";
 import unixTimeToDays from "../../../utils/unixTimeToDays.js"; 
 import User from "../../../db/models/User.js"; 
-import { bonusPercentage, mongoIdLength } from "../../../utils/constants.js";
+import { mongoIdLength } from "../../../utils/constants.js";
 
 
 const joiSchema = joi.object({
     packages: joi.array().items(joi.string().min(mongoIdLength)).min(1).required(),
     expiresAt: joi.number().positive().required(), // unix time
     patientId: joi.string().min(mongoIdLength).required(),
-    cardId: joi.string().optional(),
     paymentMethod: joi.string().valid('Cash', 'Card').required(), 
     PCP: joi.string().min(mongoIdLength).optional(), // id of a doctor who will supervise the patient 
-    dateOfBirth: joi.string().optional(), 
-    gender: joi.string().valid('Male', 'Female').optional()
+    dateOfBirth: joi.number().required(), 
+    gender: joi.string().valid('Male', 'Female').required()
 })
 
 const activateInpatient = async (req,res, next) => {
-    if(isNaN(bonusPercentage)) throw new ServerError("BONUS_PERCENTAGE is not specified in the .env"); 
     const session = await mongoose.startSession();
     session.startTransaction(); 
     let isTransactionFailed = false; 
     try{
         const data = await validateData(joiSchema, req.body);
         const { 
-            cardId,
             patientId,
             paymentMethod,
             packages,
@@ -72,23 +68,25 @@ const activateInpatient = async (req,res, next) => {
             if(!medPackage) throw new NotFound(`Package with ID ${id} not found`); 
             netPrice += (medPackage.price * treatmentDurationDays); 
         }
-        if(cardId){  // if cardId is prvided, calculate adjustment and update the balance
-            const adjustment = netPrice * bonusPercentage;
-            const bonusCard = await BonusCard.findByIdAndUpdate(cardId, 
-                { $inc: { balance: adjustment } }, 
-                { new: false, session }
-            );
-            if(!bonusCard) throw new NotFound(`Bonus card with ID ${cardId} not found`);
-        }
+
+        // if(cardId){  // if cardId is prvided, calculate adjustment and update the balance
+        //     const adjustment = netPrice * bonusPercentage;
+        //     const bonusCard = await BonusCard.findByIdAndUpdate(cardId, 
+        //         { $inc: { balance: adjustment } }, 
+        //         { new: false, session }
+        //     );
+        //     if(!bonusCard) throw new NotFound(`Bonus card with ID ${cardId} not found`);
+        // }
 
         const paymentData = {
             paymentMethod,
             patientId,
             amountBeforeDeduction: netPrice,
-            amountFinal: netPrice - bonusDeduction,
+            amountFinal: netPrice,
             packagesPaid: packages, 
             createdAt: currentUnix
-        }; 
+        };
+         
         const payment = await Payment.create([paymentData], {session, new: true}); // create payment record  
         if(!payment) throw new BadRequest("Payment was unsuccessful"); 
         
