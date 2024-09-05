@@ -18,6 +18,10 @@ const getCurrentCondition = async (req, res, next) => {
             return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Patient not found" });
         }
 
+        if (!patient[field]){
+            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Field not found" });
+        }
+
         // send success true and current condition if exisits
         const answer = {success: true};
         answer[field] = patient[field];
