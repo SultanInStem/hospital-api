@@ -8,7 +8,7 @@ import { NotFound } from "../../../customErrors/Errors.js";
 import { mongoIdLength } from "../../../utils/constants.js";
 
 const joiSchema = joi.object({
-    text: joi.string().required().min(5).max(100), 
+    text: joi.string().required().min(5).max(2000), 
     patientId: joi.string().min(mongoIdLength).required()
 });
 
