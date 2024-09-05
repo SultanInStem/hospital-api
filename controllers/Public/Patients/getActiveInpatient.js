@@ -7,6 +7,7 @@ const getActiveInpatient = async (req, res, next) => {
       _id: 1,
       firstName: 1,
       lastName: 1,
+      startedAt: 1,
       expiresAt: 1,
       PCP: 1,
       packages: 1
@@ -19,6 +20,11 @@ const getActiveInpatient = async (req, res, next) => {
 
     // const patients = await Patient.find(query, projection);
     const patients = await Patient.find(query, projection)
+      .populate({
+        path: "PCP",
+        model: "users",
+        select: "_id firstName lastName"
+      })
       .populate({
         path: 'packages', // Reference the 'packages' field
         model: 'MedPackages', // The MedPackage model name

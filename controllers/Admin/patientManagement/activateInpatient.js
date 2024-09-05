@@ -35,7 +35,8 @@ const activateInpatient = async (req,res, next) => {
             PCP 
         } = data; 
         const currentUnix = new Date().getTime();
-        if(expiresAt - currentUnix < 0) throw new BadRequest("Expiration date cannot be in the past"); 
+        if(expiresAt - currentUnix < 0) throw new BadRequest("Expiration date cannot be in the past");
+
         const treatmentDurationDays = unixTimeToDays(expiresAt - currentUnix);
 
         // validate patient 
@@ -55,8 +56,12 @@ const activateInpatient = async (req,res, next) => {
 
         if(!patient.dateOfBirth && data.dateOfBirth) patient.set({ dateOfBirth: data.dateOfBirth });
         if(!patient.gender && data.gender) patient.set({gender: data.gender});
-        
-        patient.set({ packages: packages, expiresAt: expiresAt }); 
+
+        patient.set({ 
+            packages: packages,
+            startedAt: currentUnix,
+            expiresAt: expiresAt 
+        }); 
         await patient.save({session}); 
         // ---- 
 
