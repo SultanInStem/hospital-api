@@ -26,9 +26,9 @@ const getActiveInpatient = async (req, res, next) => {
         select: "_id firstName lastName"
       })
       .populate({
-        path: 'packages', // Reference the 'packages' field
-        model: 'MedPackages', // The MedPackage model name
-        select: 'title price' // Select only 'title' and 'price' fields from MedPackage
+        path: 'packages', 
+        model: 'MedPackages', 
+        select: '_id title price'
       });
 
     return res.status(200).json({success: true, patients});
