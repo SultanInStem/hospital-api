@@ -38,6 +38,10 @@ const PatientSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId, 
         default: null
     },
+    startedAt: {
+        type: Number,
+        default: 0
+    },
     lastSeen: {
         type: Number, 
         required: true
