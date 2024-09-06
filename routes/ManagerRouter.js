@@ -14,6 +14,7 @@ import updatePackage from "../controllers/Manager/packageManagement/updatePackag
 import addPkgService from '../controllers/Manager/packageManagement/addPkgService.js';
 import removePkgService from "../controllers/Manager/packageManagement/removePkgService.js";
 import updateDoctor from "../controllers/Manager/doctorManagement/updateDoctor.js"; 
+import updateAdmin from "../controllers/Manager/adminManagement/updateAdmin.js";
 import undoInpatient from "../controllers/Manager/patientManagement/undoInpatient.js";
 const router = express.Router(); 
 
@@ -22,6 +23,7 @@ router.post('/admins', createAdmin);
 router.delete('/admins/:id', deleteAdmin); 
 router.get('/admins', getAllAdmins);
 router.get('/admins/search', searchAdmin); 
+router.patch('/admins/', updateAdmin);
 // 
 
 
