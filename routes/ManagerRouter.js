@@ -14,6 +14,7 @@ import updatePackage from "../controllers/Manager/packageManagement/updatePackag
 import addPkgService from '../controllers/Manager/packageManagement/addPkgService.js';
 import removePkgService from "../controllers/Manager/packageManagement/removePkgService.js";
 import updateDoctor from "../controllers/Manager/doctorManagement/updateDoctor.js"; 
+import undoInpatient from "../controllers/Manager/patientManagement/undoInpatient.js";
 const router = express.Router(); 
 
 // Create admin account 
@@ -42,5 +43,9 @@ router.delete('/package/:id', deletePackage);
 router.patch('/package', updatePackage);
 router.patch('/package/service/add', addPkgService);
 router.patch('/package/service/delete', removePkgService); 
+//
+
+// Patients
+router.patch('/inpatient/undo', undoInpatient);
 //
 export default router;
