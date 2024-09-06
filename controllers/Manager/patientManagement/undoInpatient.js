@@ -6,12 +6,13 @@ import joi from "joi";
 
 const joiSchema = joi.object({
   patientId: joi.string().min(mongoIdLength).required(),
+  startedAt: joi.number().required(),
   packages: joi.array().items(joi.string().min(mongoIdLength)).required(),
 })
 
 const undoInpatient = async (req, res, next) => {
   try{
-    const {patientId, packages} = await validateData(joiSchema, req.body);
+    const {patientId, packages, startedAt} = await validateData(joiSchema, req.body);
 
     // clear Patient stationary info
     await Patient.findByIdAndUpdate(patientId, {
@@ -25,7 +26,8 @@ const undoInpatient = async (req, res, next) => {
     const payments = await Payments.find({ 
         patientId: patientId,
         packagesPaid: { $in: packages },
-        isRefunded: false
+        isRefunded: false,
+        createdAt: {$gte: startedAt}
     }).select('_id');
 
     // set all payments of patient to refunded
