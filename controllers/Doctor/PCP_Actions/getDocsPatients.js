@@ -9,7 +9,10 @@ const getDocsPatients = async(req, res, next) => {
         const docId = req.userId; 
         const doctor = await User.findById(docId);
         if(!doctor || doctor.role !== 'Doctor') throw new NotFound(`Doctor account with this ${docId} not found`);
-        const patients = await Patient.find({ PCP: doctor._id }, { firstName: 1, lastName: 1, });
+        const patients = await Patient.find(
+            { PCP: doctor._id }, { firstName: 1, lastName: 1 }
+        );
+
         const response = {
             success: true, 
             patients
