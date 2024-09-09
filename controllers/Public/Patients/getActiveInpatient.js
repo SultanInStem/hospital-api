@@ -14,7 +14,6 @@ const getActiveInpatient = async (req, res, next) => {
     };
 
     const query = {
-      PCP: { $ne: null },
       expiresAt: { $gte: now }
     };
 
