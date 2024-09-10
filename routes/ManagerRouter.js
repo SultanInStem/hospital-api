@@ -14,6 +14,8 @@ import updatePackage from "../controllers/Manager/packageManagement/updatePackag
 import addPkgService from '../controllers/Manager/packageManagement/addPkgService.js';
 import removePkgService from "../controllers/Manager/packageManagement/removePkgService.js";
 import updateDoctor from "../controllers/Manager/doctorManagement/updateDoctor.js"; 
+import updateAdmin from "../controllers/Manager/adminManagement/updateAdmin.js";
+import undoInpatient from "../controllers/Manager/patientManagement/undoInpatient.js";
 const router = express.Router(); 
 
 // Create admin account 
@@ -21,6 +23,7 @@ router.post('/admins', createAdmin);
 router.delete('/admins/:id', deleteAdmin); 
 router.get('/admins', getAllAdmins);
 router.get('/admins/search', searchAdmin); 
+router.patch('/admins/', updateAdmin);
 // 
 
 
@@ -42,5 +45,9 @@ router.delete('/package/:id', deletePackage);
 router.patch('/package', updatePackage);
 router.patch('/package/service/add', addPkgService);
 router.patch('/package/service/delete', removePkgService); 
+//
+
+// Patients
+router.patch('/inpatient/undo', undoInpatient);
 //
 export default router;

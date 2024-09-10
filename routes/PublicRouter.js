@@ -12,6 +12,7 @@ import getDoctors from "../controllers/Public/Doctors/getDoctors.js";
 import getPayments from "../controllers/Public/Payments/getPayments.js";
 import getSinglePayment from "../controllers/Public/Payments/getSinglePayment.js";
 import getActiveInpatient from "../controllers/Public/Patients/getActiveInpatient.js";
+import getRecordDiagnosis from "../controllers/Public/MedicalRecords/getRecordDiagnosis.js";
 const router = express.Router(); 
 
 // Patients 
@@ -29,6 +30,7 @@ router.get("/services/single/:id", getSingleService);
 // Medical records
 router.get("/medicalrecords", getMedicalRecords);
 router.get("/medicalrecords/single/:id", getSingleRecord); // id of the medical record
+router.get("/medicalrecords/diagnosis/:id", getRecordDiagnosis);
 //
 
 // Doctors 
