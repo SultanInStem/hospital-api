@@ -54,7 +54,7 @@ const getPatientsQueue = async (req, res, next) => {
 
         const patientRecords = await PatientMedicalRecord.find(
             filter,
-            { paymentRecord: 0, updatedAt: 0, __v: 0 }
+            { paymentRecord: 0, updatedAt: 0, __v: 0, mainDiagnosis: 0 }
         );
 
         // Create a map of record IDs to their service titles

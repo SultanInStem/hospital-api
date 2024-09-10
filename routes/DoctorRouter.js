@@ -18,6 +18,7 @@ import updateStatusLocalis from "../controllers/Doctor/PCP_Actions/updateStatusL
 import updateMainDiagnosis from "../controllers/Doctor/PCP_Actions/updateMainDiagnosis.js";
 import updateEpidemicHistory from "../controllers/Doctor/PCP_Actions/updateEpidemicHistory.js";
 import updateComplaints from "../controllers/Doctor/PCP_Actions/updateComplaints.js";
+import updateRecordDiagnosis from "../controllers/Doctor/medicalRecords/patchMainDiagnosis.js";
 // NOTES 
 router.get('/notes/all/:id', getAllNotes);
 router.get('/notes/specific/:id', getDocsNotes); 
@@ -32,6 +33,7 @@ router.get("/patients/queue", getPatientsQueue);
 // Med Records 
 router.patch("/medicalrecords/complete/:id", completeRecord); // complete med-record
 router.patch("/medicalrecords/refund/:id", redirectForRefund); // redirect for a refund 
+router.patch('/medicalrecords/diagnosis', updateRecordDiagnosis); // update diagnosis linked to med record
 
 
 // Inpatients  

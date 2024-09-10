@@ -10,7 +10,8 @@ const joiSchema = joi.object({
     sortOrder: joi.string().valid('1','-1').regex(/^\d+$/),
     sortBy: joi.string().valid('date','price'),
     status: joi.string().valid('completed', 'toRefund', 'refunded', 'queue'),
-    skip: joi.string().regex(/^\d+$/)
+    skip: joi.string().regex(/^\d+$/),
+    isAdmin: joi.boolean().optional()
 });
 
 const getMedicalRecords = async(req, res, next) => {
@@ -21,9 +22,14 @@ const getMedicalRecords = async(req, res, next) => {
         const skip = Number(query['skip']) > 0 ? Number(query['skip']) : 0; 
         const sortOrder = Number(query['sortOrder']) ? Number(query['sortOrder']): -1; 
         const filter = {}; 
+        let projection;
 
         if(query['status']){
             filter['status'] = query['status']
+        }
+
+        if(query['isAdmin']){
+            projection = {mainDiagnosis: 0}
         }
 
         // add filter to have records for today only
@@ -33,7 +39,7 @@ const getMedicalRecords = async(req, res, next) => {
             $lte: today.end
         }
 
-        const medicalRecords = await PatientMedicalRecord.find(filter)
+        const medicalRecords = await PatientMedicalRecord.find(filter, projection)
         .skip(skip) 
         .limit(querySize)
         .sort({[sortBy]: sortOrder}); 
