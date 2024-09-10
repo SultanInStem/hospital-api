@@ -14,7 +14,9 @@ import _ from "lodash";
 //             const queue = services[i].currentQueue; 
 //             if(queue.length < 1) continue; 
 //             for(let j = 0; j < queue.length; j++){
-//                 const patientRecord = await PatientMedicalRecord.findById(queue[j], {paymentRecord: 0, updatedAt: 0, __v: 0});  
+//                 const patientRecord = await PatientMedicalRecord.findById(queue[j], 
+//                     {paymentRecord: 0, updatedAt: 0, __v: 0, mainDiagnosis: 0}
+//                 );  
 //                 if(!patientRecord) continue; 
 //                 const recordObj = patientRecord.toObject(); 
 //                 recordObj['serviceTitle'] = services[i].title; 
