@@ -35,7 +35,8 @@ const login = async (req, res, next) => {
             accessToken, 
             refreshToken, 
             username, 
-            role: user.role
+            role: user.role,
+            fullname: `${user.firstName} ${user.lastName}`
         });
 }catch(err){
         if(requestNumber > 0){
