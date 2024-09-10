@@ -1,4 +1,4 @@
-import jwt, { decode } from "jsonwebtoken"; 
+import jwt from "jsonwebtoken"; 
 import { Unauthorized } from "../customErrors/Errors.js";
 import ErrorHandler from '../errorHandlers/ErrorHandler.js'; 
 import { StatusCodes } from 'http-status-codes';

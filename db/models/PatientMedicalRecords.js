@@ -44,6 +44,9 @@ const Schema = new mongoose.Schema({
     queueNum: {
         type: Number, 
         required: true
+    },
+    mainDiagnosis: {
+        type: String
     }
 }, {timestamps: true})
 

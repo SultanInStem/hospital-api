@@ -16,7 +16,7 @@ const joiSchema = joi.object({
     expiresAt: joi.number().positive().required(), // unix time
     patientId: joi.string().min(mongoIdLength).required(),
     paymentMethod: joi.string().valid('Cash', 'Card').required(), 
-    PCP: joi.string().min(mongoIdLength).optional(), // id of a doctor who will supervise the patient 
+    PCP: joi.string().min(mongoIdLength).required(), // id of a doctor who will supervise the patient 
     dateOfBirth: joi.number().required(), 
     gender: joi.string().valid('Male', 'Female').required()
 })
@@ -44,15 +44,11 @@ const activateInpatient = async (req,res, next) => {
         if(!patient) throw new NotFound(`Patient with ID ${patientId} not found`);
         else if(!patient.dateOfBirth && !data.dateOfBirth) throw new BadRequest("Please provide date of birth"); 
         else if(!patient.gender && !data.gender) throw new BadRequest("Please provide a gender");
-
-
-        if(PCP){
-            const doc = await User.findById(PCP);
-            if(!doc || doc.role !== 'Doctor') throw new NotFound(`Primary care physician (PCP) with ID ${PCP} is not found`);  
-            patient.set({PCP: PCP}); 
-        }else{
-            if(!patient.PCP) throw new BadRequest("Patient does not have a supervising docotor. Please provide PCP"); 
-        }
+        else if(patient.expiresAt >= currentUnix) throw new BadRequest("You can have only one static activation at a time")
+        
+        const doc = await User.findById(PCP);
+        if(!doc || doc.role !== 'Doctor') throw new NotFound(`Primary care physician (PCP) with ID ${PCP} is not found`);  
+        patient.set({PCP: PCP}); 
 
         if(!patient.dateOfBirth && data.dateOfBirth) patient.set({ dateOfBirth: data.dateOfBirth });
         if(!patient.gender && data.gender) patient.set({gender: data.gender});
