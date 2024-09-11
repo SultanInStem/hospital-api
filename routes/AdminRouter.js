@@ -10,6 +10,7 @@ import deleteCard from "../controllers/Admin/bonusCard/deleteCard.js";
 import activateInpatient from "../controllers/Admin/patientManagement/activateInpatient.js";
 import getCard from "../controllers/Admin/bonusCard/getCard.js";
 import getAllCards from "../controllers/Admin/bonusCard/getAllCards.js";
+import makeInpatientRefund from "../controllers/Admin/finanaceManagment/makeInpatientRefund.js";
 
 // Patients 
 router.post("/patients/create", createPatient); 
@@ -24,6 +25,7 @@ router.post("/medicalrecords/create", createMedicalRecord);
 
 // Finance 
 router.patch("/finance/refund/:id", makeRefund); 
+router.patch("/finance/inpatient/refund/:id", makeInpatientRefund);
 // ------- 
 
 router.get('/bonuscards', getAllCards);
