@@ -14,6 +14,7 @@ import { mongoIdLength } from "../../../utils/constants.js";
 const joiSchema = joi.object({
     packages: joi.array().items(joi.string().min(mongoIdLength)).min(1).required(),
     expiresAt: joi.number().positive().required(), // unix time
+    startedAt: joi.number().positive().required(),
     patientId: joi.string().min(mongoIdLength).required(),
     paymentMethod: joi.string().valid('Cash', 'Card').required(), 
     PCP: joi.string().min(mongoIdLength).required(), // id of a doctor who will supervise the patient 
@@ -31,13 +32,15 @@ const activateInpatient = async (req,res, next) => {
             patientId,
             paymentMethod,
             packages,
-            expiresAt, 
+            expiresAt,
+            startedAt, 
             PCP 
         } = data; 
-        const currentUnix = new Date().getTime();
-        if(expiresAt - currentUnix < 0) throw new BadRequest("Expiration date cannot be in the past");
 
-        const treatmentDurationDays = unixTimeToDays(expiresAt - currentUnix);
+        const currentUnix = new Date().getTime();
+        if(expiresAt - startedAt < 0) throw new BadRequest("Expiration date cannot be in the past");
+
+        const treatmentDurationDays = unixTimeToDays(expiresAt - startedAt);
 
         // validate patient 
         const patient = await Patient.findById(patientId); 
@@ -55,7 +58,7 @@ const activateInpatient = async (req,res, next) => {
 
         patient.set({ 
             packages: packages,
-            startedAt: currentUnix,
+            startedAt: startedAt,
             expiresAt: expiresAt 
         }); 
         await patient.save({session}); 
