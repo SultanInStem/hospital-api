@@ -16,6 +16,8 @@ import removePkgService from "../controllers/Manager/packageManagement/removePkg
 import updateDoctor from "../controllers/Manager/doctorManagement/updateDoctor.js"; 
 import updateAdmin from "../controllers/Manager/adminManagement/updateAdmin.js";
 import undoInpatient from "../controllers/Manager/patientManagement/undoInpatient.js";
+import getCardStats from "../controllers/Manager/statsManagement/getCardStats.js";
+import getLineChartData from "../controllers/Manager/statsManagement/getChartPaymentStats.js";
 const router = express.Router(); 
 
 // Create admin account 
@@ -49,5 +51,10 @@ router.patch('/package/service/delete', removePkgService);
 
 // Patients
 router.patch('/inpatient/undo', undoInpatient);
+//
+
+// Statistics
+router.get('/stats/cards', getCardStats);
+router.get('/stats/chart/payment', getLineChartData);
 //
 export default router;
