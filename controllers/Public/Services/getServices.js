@@ -17,7 +17,8 @@ const getServices = async(req, res, next) => {
         if(query['size'] === -1){
             services = await Service.find(newQuery, {createdAt: 0, updatedAt: 0, description: 0}); 
         }else{
-            services = await Service.find(newQuery, {createdAt: 0, updatedAt: 0, description: 0}).limit(query['size']);
+            services = await Service.find(newQuery, {createdAt: 0, updatedAt: 0, description: 0})
+                .limit(query['size']);
         }
         services = services.map(item => {
             const temp = item.toObject();
