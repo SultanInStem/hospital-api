@@ -24,7 +24,7 @@ const getCardStats = async (req, res, next) => {
 
         const getRevenue = async () => {
             const result = await Payment.aggregate([
-                { $match: { createdAt: { $gte: startDate } } },
+                { $match: { createdAt: { $gte: startDate }, isRefunded: false } },
                 { $group: { _id: null, totalRevenue: { $sum: "$amountFinal" } } }
             ]);
             return result.length > 0 ? result[0].totalRevenue : 0;
