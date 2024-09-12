@@ -30,13 +30,12 @@ const getMedicalRecords = async(req, res, next) => {
 
         if(query['isAdmin']){
             projection = {mainDiagnosis: 0}
-        }
-
-        // add filter to have records for today only
-        const today = getInterval();
-        filter['createdAt'] = {
-            $gte: today.start,
-            $lte: today.end
+            // add filter to have records for today only
+            const today = getInterval();
+            filter['createdAt'] = {
+                $gte: today.start,
+                $lte: today.end
+            }
         }
 
         const medicalRecords = await PatientMedicalRecord.find(filter, projection)
