@@ -36,19 +36,22 @@ MONGO_MANAGER_KEY = 'your key'
 
 5. Install docker/docker-compose if not installed
 
-5.2. Install certbot for Let's encrypt
-```bash
-sudo apt update
-sudo apt install certbot python3-certbot-nginx
+  5.2. Install certbot for Let's encrypt
+  ```bash
+  sudo apt update
+  sudo apt install certbot python3-certbot-nginx
+  ```
+
+  5.3. Configure certbot
+  ```bash
+  sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+  sudo systemctl status certbot.timer # checks if cron job to auto update certificate is running
 ```
 
-5.3. Configure certbot
+6. run 
 ```bash
-sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
-sudo systemctl status certbot.timer # checks if cron job to auto update certificate is running
-```
-
-6. run `sudo docker-compose up -d` 
+sudo docker-compose up -d`
+``` 
    - *-d here to run in the background*
 7. Enter inside of mongodb container
 
