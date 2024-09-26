@@ -1,6 +1,9 @@
 networks:
   hospital-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 111.222.32.0/24
 
 services:
   mongodb:
@@ -11,13 +14,38 @@ services:
       - '27017:27017'
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: db_pass
+      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/db_pass
     secrets:
       - db_pass
     volumes:
-      - mongo-volume:/data/db
+      - "mongo-volume:/data/db"
+      - "mongo-config:/data/configdb"
+      - ./keyfile.txt:/etc/mongodb/pki/keyfile.txt
     networks:
-      - hospital-network
+      hospital-network:
+        ipv4_address: 111.222.32.2
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017", "--keyFile", "/etc/mongodb/pki/keyfile.txt"]
+  
+  mongodb2:
+    image: mongo:latest
+    container_name: sec-mongodb
+    restart: always
+    ports:
+      - '27018:27018'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/db_pass
+    secrets:
+      - db_pass
+    volumes:
+      - "mongo2-volume:/data/db"
+      - "mongo2-config:/data/configdb"
+      - ./keyfile.txt:/etc/mongodb/pki/keyfile.txt
+    networks:
+      hospital-network:
+        ipv4_address: 111.222.32.3
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018", "--keyFile", "/etc/mongodb/pki/keyfile.txt"]
+  
 
   backend:
     build: .
@@ -54,3 +82,6 @@ secrets:
 
 volumes:
   mongo-volume:
+  mongo2-volume:
+  mongo-config:
+  mongo2-config:
