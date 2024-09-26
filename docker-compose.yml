@@ -1,0 +1,30 @@
+networks:
+  hospital-network:
+    driver: bridge
+
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    # ports:
+      # - '27017:27017'
+    volumes:
+      - mongo-volume:/data/db
+    networks:
+      - hospital-network
+
+  backend:
+    build: .
+    container_name: node-api
+    restart: always
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env 
+    depends_on:
+      - mongodb
+    networks:
+      - hospital-network
+
+volumes:
+  mongo-volume:
