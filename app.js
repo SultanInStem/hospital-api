@@ -47,7 +47,7 @@ const start = async () => {
     try{
         await connect(process.env.MONGO_URL);
         app.listen(PORT, () => {
-            console.log('server is running'); 
+            console.log('server is running on port ' + PORT); 
             const ipAddressIntervalId = setInterval(() => {
                 ipRecords.clear();
             }, 3600000); 
