@@ -45,6 +45,8 @@ services:
       hospital-network:
         ipv4_address: 111.222.32.3
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018", "--keyFile", "/etc/mongodb/pki/keyfile.txt"]
+    depends_on:
+      - mongodb
   
 
   backend:
@@ -56,7 +58,7 @@ services:
     env_file:
       - .env 
     depends_on:
-      - mongodb
+      - mongodb2
     networks:
       - hospital-network
 
