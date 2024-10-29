@@ -15,6 +15,10 @@ import mongo_sanitize from "express-mongo-sanitize";
 import helmet from "helmet";
 // ------------------ 
 
+// JOBS
+import './jobs/clearPatientQueue.js'; 
+//--------
+
 
 const PORT = process.env.PORT || 3000; 
 import express from "express";

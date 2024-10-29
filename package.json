@@ -25,7 +25,8 @@
     "lodash": "^4.17.21",
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",
-    "nanoid": "^5.0.5"
+    "nanoid": "^5.0.5",
+    "node-cron": "^3.0.3"
   },
   "devDependencies": {
     "mocha": "^10.4.0",
