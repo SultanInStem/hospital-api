@@ -7,7 +7,7 @@ import { BadRequest } from "../../../customErrors/Errors.js";
 // Joi схема для валидации даты
 const joiSchema = joi.object({
     startDate: joi.number().required(), // Unix timestamp
-    periodType: joi.string().valid('today', 'week', 'month', 'year').required()
+    periodType: joi.string().required()
 });
 
 // Функция для форматирования даты
@@ -34,7 +34,7 @@ const getLineChartData = async (req, res, next) => {
         let labels = [];
 
         switch (periodType) {
-            case 'today':
+            case "today":
                 for(let i = 0; i < 24; i++){
                     const hour = i * 1000 * 60 * 60;
                     const localStart = new Date(startDate + hour);
@@ -48,8 +48,7 @@ const getLineChartData = async (req, res, next) => {
                     labels.push(formatDate(localStart, 'today'));
                 }
                 break;
-
-            case 'week':
+            case "week":
                 // 7 дней
                 for (let i = 0; i < 7; i++) {
                     const date = new Date(start.getTime() + i * 24 * 60 * 60 * 1000); // Добавляем дни
@@ -60,7 +59,7 @@ const getLineChartData = async (req, res, next) => {
                     labels.push(formatDate(date, 'week'));
                 }
                 break;
-            case 'month':
+            case "month":
                 // 4 недели
                 for (let i = 0; i < 4; i++) {
                     const startOfWeek = new Date(start.getTime() + i * 7 * 24 * 60 * 60 * 1000); // Начало недели
@@ -73,7 +72,7 @@ const getLineChartData = async (req, res, next) => {
                     labels.push(`Неделя ${i + 1}`);
                 }
                 break;
-            case 'year':
+            case "year":
                 // 12 месяцев
                 for (let i = 0; i < 12; i++) {
                     const newDate = new Date(start);
