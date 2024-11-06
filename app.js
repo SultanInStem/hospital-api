@@ -34,7 +34,7 @@ import ManagerRouter from "./routes/ManagerRouter.js";
 
 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
+    windowMs: 1 * 60 * 1000, 
     limit: 100
 });
 app.use(express.json());
