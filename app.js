@@ -15,6 +15,10 @@ import mongo_sanitize from "express-mongo-sanitize";
 import helmet from "helmet";
 // ------------------ 
 
+// JOBS
+import './jobs/clearPatientQueue.js'; 
+//--------
+
 
 const PORT = process.env.PORT || 3000; 
 import express from "express";
@@ -30,7 +34,7 @@ import ManagerRouter from "./routes/ManagerRouter.js";
 
 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
+    windowMs: 1 * 60 * 1000, 
     limit: 100
 });
 app.use(express.json());

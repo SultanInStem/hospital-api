@@ -12,9 +12,11 @@ const joiSchema = joi.object({
 
 // Функция для форматирования даты
 const formatDate = (date, periodType) => {
-    const options = { day: '2-digit', month: 'short' };
+    const options = { day: '2-digit', month: 'short', hour: '2-digit' };
     if (periodType === 'year') {
         return date.toLocaleDateString('ru-RU', { month: 'short' }); // Для года выводим только месяц
+    } else if (periodType === 'today') {
+        return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
     }
     return date.toLocaleDateString('ru-RU', options); // Пример: "01 янв."
 };
@@ -32,7 +34,21 @@ const getLineChartData = async (req, res, next) => {
         let labels = [];
 
         switch (periodType) {
-            case 'week':
+            case "today":
+                for(let i = 0; i < 24; i++){
+                    const hour = i * 1000 * 60 * 60;
+                    const localStart = new Date(startDate + hour);
+                    const end = new Date(localStart.getTime() + hour);
+
+                    intervals.push({
+                        start: localStart,
+                        end: end
+                    });
+            
+                    labels.push(formatDate(localStart, 'today'));
+                }
+                break;
+            case "week":
                 // 7 дней
                 for (let i = 0; i < 7; i++) {
                     const date = new Date(start.getTime() + i * 24 * 60 * 60 * 1000); // Добавляем дни
@@ -43,11 +59,12 @@ const getLineChartData = async (req, res, next) => {
                     labels.push(formatDate(date, 'week'));
                 }
                 break;
-            case 'month':
+            case "month":
                 // 4 недели
                 for (let i = 0; i < 4; i++) {
                     const startOfWeek = new Date(start.getTime() + i * 7 * 24 * 60 * 60 * 1000); // Начало недели
                     const endOfWeek = new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000); // Конец недели
+                    
                     intervals.push({
                         start: startOfWeek,
                         end: endOfWeek
@@ -55,7 +72,7 @@ const getLineChartData = async (req, res, next) => {
                     labels.push(`Неделя ${i + 1}`);
                 }
                 break;
-            case 'year':
+            case "year":
                 // 12 месяцев
                 for (let i = 0; i < 12; i++) {
                     const newDate = new Date(start);
@@ -76,6 +93,7 @@ const getLineChartData = async (req, res, next) => {
         // Инициализация массивов для данных
         const nonRefundData = initializeDataArray(intervals.length);
         const refundData = initializeDataArray(intervals.length);
+        
 
         // Агрегация по интервалам времени
         const results = await Payment.aggregate([
@@ -86,11 +104,7 @@ const getLineChartData = async (req, res, next) => {
             },
             {
                 $group: {
-                    _id: {
-                        day: { $dayOfMonth: { $toDate: "$createdAt" } },
-                        month: { $month: { $toDate: "$createdAt" } },
-                        year: { $year: { $toDate: "$createdAt" } }
-                    },
+                    _id: "$createdAt",
                     nonRefundAmount: {
                         $sum: {
                             $cond: { if: { $eq: ["$isRefunded", false] }, then: "$amountFinal", else: 0 }
@@ -104,13 +118,14 @@ const getLineChartData = async (req, res, next) => {
                 }
             },
             {
-                $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 }
+                $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1, "_id.hour": 1 }
             }
         ]);
 
+
         // Маппинг данных из результата в интервалы
         results.forEach(result => {
-            const date = new Date(result._id.year, result._id.month - 1, result._id.day);
+            const date = new Date(result._id);
             const intervalIndex = intervals.findIndex(interval => date >= interval.start && date < interval.end);
 
             if (intervalIndex !== -1) {
